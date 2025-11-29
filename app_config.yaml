@@ -1,0 +1,9 @@
+
+# 数据库配置
+database:
+  mysql:
+    host:
+    port:
+    user:
+    password:
+    database:
