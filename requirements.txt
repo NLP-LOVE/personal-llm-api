@@ -4,3 +4,4 @@ fastapi==0.122.0
 aiomysql==0.3.2
 pandas==2.3.3
 loguru==0.7.3
+uvicorn==0.38.0

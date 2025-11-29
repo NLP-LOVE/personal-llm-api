@@ -1,6 +1,6 @@
 
 __pycache__
-configs.toml
 .idea
 app_config.yaml
 note.md
+logs

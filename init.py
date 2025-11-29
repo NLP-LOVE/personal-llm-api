@@ -18,10 +18,8 @@ async def init_db():
         with open('init.sql', 'r', encoding='utf-8') as f:
             sql = f.read()
         await db_client.execute(sql)
-    else:
-        logger.info('数据库已经初始化过')
 
-
+        logger.info('数据库初始化完成')
 
     db_client.pool.close()
     await db_client.pool.wait_closed()

@@ -1,4 +1,3 @@
-import platform
 import os
 import asyncio
 
@@ -15,7 +14,9 @@ logger.add(
 
 
 # 导入FastAPI
+import uvicorn
 from fastapi import FastAPI, Request
+
 from init import init_db
 
 
@@ -45,5 +46,4 @@ async def chat_completions(request: Request):
 
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
