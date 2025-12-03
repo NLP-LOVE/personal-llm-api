@@ -16,6 +16,8 @@ logger.add(
 # 导入FastAPI
 import uvicorn
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+
 
 from init import init_db
 
@@ -32,6 +34,9 @@ app = FastAPI(
     redoc_url=None,     # 禁用 ReDoc
     openapi_url=None    # 禁用 OpenAPI JSON
 )
+
+# 挂载静态文件目录
+app.mount("/static", StaticFiles(directory="static/"), name="static1")
 
 # 定义LLM接口
 @app.post('/v1/chat/completions')

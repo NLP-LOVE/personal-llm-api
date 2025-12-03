@@ -1,0 +1,100 @@
+{
+    "type": "page",
+    "body": [
+        {
+            "type": "form",
+            "title": "内联模式",
+            "target": "chart_request,chart_token,chart_money",
+            "mode": "inline",
+            "body": [
+                {
+                    "type": "input-text",
+                    "name": "before_num",
+                    "value": "7"
+                },
+                {
+                    "type": "select",
+                    "name": "unit_type",
+                    "selectFirst": true,
+                    "options": [
+                        {
+                            "label": "日",
+                            "value": "day"
+                        },
+                        {
+                            "label": "月",
+                            "value": "month"
+                        }
+                    ]
+                },
+                {
+                    "type": "submit",
+                    "level": "primary",
+                    "label": "查询"
+                }
+            ]
+        },
+        {
+            "type": "grid",
+            "columns": [
+                {
+                    "body": [
+                        {
+                            "type": "chart",
+                            "name": "chart_request",
+                            "api": {
+                                "url": "/admin/home/chart-request",
+                                "method": "get",
+                                "data": {
+                                    "before_num": "$before_num",
+                                    "unit_type": "$unit_type"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "body": [
+                        {
+                            "type": "chart",
+                            "name": "chart_token",
+                            "api": {
+                                "url": "/admin/home/chart-token",
+                                "method": "get",
+                                "data": {
+                                    "before_num": "$before_num",
+                                    "unit_type": "$unit_type"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "grid",
+            "columns": [
+                {
+                    "body": [
+                        {
+                            "type": "chart",
+                            "name": "chart_money",
+                            "api": {
+                                "url": "/admin/home/chart-money",
+                                "method": "get",
+                                "data": {
+                                    "before_num": "$before_num",
+                                    "unit_type": "$unit_type"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "body": [
+                    ]
+                }
+            ]
+        }
+    ]
+}

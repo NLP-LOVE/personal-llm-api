@@ -1,0 +1,78 @@
+{
+    "status": 0,
+    "msg": "",
+    "data": {
+        "pages": [
+            {
+                "label": "Home",
+                "url": "",
+                "redirect": "home"
+            },
+            {
+                "label": "",
+                "children": [
+                    {
+                        "label": "首页",
+                        "url": "home",
+                        "icon": "fa fa-plus",
+                        "schemaApi": {
+                            "method": "get",
+                            "url": "/static/pages/home.json",
+                            "headers": {
+                                "Cache-Control": "no-cache"
+                            }
+                        }
+                    },
+                    {
+                        "label": "接口管理",
+                        "url": "api-manage",
+                        "icon": "fa fa-bolt",
+                        "schemaApi": {
+                            "method": "get",
+                            "url": "/static/pages/api-manage.json",
+                            "headers": {
+                                "Cache-Control": "no-cache"
+                            }
+                        }
+                    },
+                    {
+                        "label": "chat 历史",
+                        "url": "chat-history",
+                        "icon": "fa fa-bolt",
+                        "schemaApi": {
+                            "method": "get",
+                            "url": "/static/pages/chat-history.json",
+                            "headers": {
+                                "Cache-Control": "no-cache"
+                            }
+                        }
+                    },
+                    {
+                        "label": "prompt 管理",
+                        "url": "prompt-manage",
+                        "icon": "fa fa-bolt",
+                        "schemaApi": {
+                            "method": "get",
+                            "url": "/static/pages/prompt-manage.json",
+                            "headers": {
+                                "Cache-Control": "no-cache"
+                            }
+                        }
+                    },
+                    {
+                        "label": "数据库管理",
+                        "url": "db-manage",
+                        "icon": "fa fa-bolt",
+                        "schemaApi": {
+                            "method": "get",
+                            "url": "/static/pages/db-manage.json",
+                            "headers": {
+                                "Cache-Control": "no-cache"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

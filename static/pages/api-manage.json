@@ -1,0 +1,278 @@
+{
+    "type": "page",
+    "body": [
+        {
+            "label": "新增模型供应商",
+            "type": "button",
+            "actionType": "dialog",
+            "level": "primary",
+            "className": "m-b-sm",
+            "dialog": {
+                "title": "新增模型供应商",
+                "body": {
+                    "type": "form",
+                    "api": "post:/api-manage/provider/create",
+                    "body": [
+                        {
+                            "type": "input-text",
+                            "name": "provider_name",
+                            "label": "供应商名称"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "provider_english_name",
+                            "label": "供应商英文名称"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "service_key",
+                            "label": "api-key"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "service_url",
+                            "label": "服务url"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "crud",
+            "api": "/api-manage/provider/list",
+            "syncLocation": false,
+            "columns": [
+                {
+                    "name": "row_id",
+                    "label": "ID"
+                },
+                {
+                    "name": "provider_name",
+                    "label": "供应商名称"
+                },
+                {
+                    "name": "provider_english_name",
+                    "label": "供应商英文名称"
+                },
+                {
+                    "name": "service_url",
+                    "label": "服务url"
+                },
+                {
+                    "name": "create_time",
+                    "label": "创建时间"
+                },
+                {
+                    "type": "operation",
+                    "label": "操作",
+                    "buttons": [
+                        {
+                            "label": "修改",
+                            "type": "button",
+                            "actionType": "dialog",
+                            "className": "m-b-sm",
+                            "dialog": {
+                                "title": "修改标签",
+                                "body": {
+                                    "type": "form",
+                                    "api": "post:/api-manage/provider/update",
+                                    "body": [
+                                        {
+                                            "type": "input-text",
+                                            "name": "id",
+                                            "label": "ID",
+                                            "value": "${id}",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "provider_name",
+                                            "label": "供应商名称"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "provider_english_name",
+                                            "label": "供应商英文名称"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "service_key",
+                                            "label": "api-key"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "service_url",
+                                            "label": "服务url"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "label": "新增模型接口",
+            "type": "button",
+            "actionType": "dialog",
+            "level": "primary",
+            "className": "m-b-sm",
+            "dialog": {
+                "title": "新增模型接口",
+                "body": {
+                    "type": "form",
+                    "api": "post:/api-manage/model/create",
+                    "body": [
+                        {
+                            "type": "input-text",
+                            "name": "provider_english_name",
+                            "label": "供应商英文名称"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "model_name",
+                            "label": "model_name"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "model_version_name",
+                            "label": "model_version_name"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "model_short_name",
+                            "label": "model_short_name"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "input_unit_price",
+                            "label": "模型输入单价/千token"
+                        },
+                        {
+                            "type": "input-text",
+                            "name": "output_unit_price",
+                            "label": "模型输出单价/千token"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "crud",
+            "api": "/api-manage/model/list",
+            "syncLocation": false,
+            "columns": [
+                {
+                    "name": "status",
+                    "type": "switch",
+                    "label": "状态",
+                    "onEvent": {
+                        "change": {
+                            "actions": [
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "row_id",
+                    "label": "ID"
+                },
+                {
+                    "name": "provider_english_name",
+                    "label": "供应商英文名称"
+                },
+                {
+                    "name": "model_name",
+                    "label": "model_name",
+                    "copyable": true
+                },
+                {
+                    "name": "model_version_name",
+                    "label": "model_version_name",
+                    "copyable": true
+                },
+                {
+                    "name": "model_short_name",
+                    "label": "model_short_name",
+                    "copyable": true
+                },
+                {
+                    "name": "input_unit_price",
+                    "label": "模型输入单价/千token"
+                },
+                {
+                    "name": "output_unit_price",
+                    "label": "模型输出单价/千token"
+                },
+                {
+                    "name": "create_time",
+                    "label": "创建时间"
+                },
+                {
+                    "type": "operation",
+                    "label": "操作",
+                    "buttons": [
+                        {
+                            "label": "修改",
+                            "type": "button",
+                            "actionType": "dialog",
+                            "className": "m-b-sm",
+                            "dialog": {
+                                "title": "修改标签",
+                                "body": {
+                                    "type": "form",
+                                    "api": "post:/api-manage/model/update",
+                                    "body": [
+                                        {
+                                            "type": "input-text",
+                                            "name": "id",
+                                            "label": "ID",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "name": "status",
+                                            "type": "switch",
+                                            "label": "状态"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "provider_english_name",
+                                            "label": "供应商英文名称"
+
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "model_name",
+                                            "label": "model_name"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "model_version_name",
+                                            "label": "model_version_name"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "model_short_name",
+                                            "label": "model_short_name"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "input_unit_price",
+                                            "label": "模型输入单价/千token"
+                                        },
+                                        {
+                                            "type": "input-text",
+                                            "name": "output_unit_price",
+                                            "label": "模型输出单价/千token"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
