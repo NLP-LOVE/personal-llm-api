@@ -17,6 +17,7 @@ logger.add(
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 
 from init import init_db
@@ -35,6 +36,14 @@ app = FastAPI(
     openapi_url=None    # 禁用 OpenAPI JSON
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 生产环境不要用 *
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # 挂载静态文件目录
 app.mount("/static", StaticFiles(directory="static/"), name="static1")
 
@@ -51,4 +60,4 @@ async def chat_completions(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=2321)
