@@ -12,12 +12,12 @@
                 "label": "",
                 "children": [
                     {
-                        "label": "首页",
-                        "url": "home",
+                        "label": "LLM使用量",
+                        "url": "llm-usage",
                         "icon": "fa fa-plus",
                         "schemaApi": {
                             "method": "get",
-                            "url": "/static/pages/home.json",
+                            "url": "/dashboard/pages/llm-usage.json",
                             "headers": {
                                 "Cache-Control": "no-cache"
                             }

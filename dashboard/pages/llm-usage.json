@@ -24,6 +24,10 @@
                         {
                             "label": "月",
                             "value": "month"
+                        },
+                        {
+                            "label": "年",
+                            "value": "year"
                         }
                     ]
                 },
@@ -43,7 +47,7 @@
                             "type": "chart",
                             "name": "chart_request",
                             "api": {
-                                "url": "/admin/home/chart-request",
+                                "url": "/backend/llm-usage/chart-request",
                                 "method": "get",
                                 "data": {
                                     "before_num": "$before_num",
@@ -59,7 +63,7 @@
                             "type": "chart",
                             "name": "chart_token",
                             "api": {
-                                "url": "/admin/home/chart-token",
+                                "url": "/backend/llm-usage/chart-token",
                                 "method": "get",
                                 "data": {
                                     "before_num": "$before_num",
@@ -80,7 +84,7 @@
                             "type": "chart",
                             "name": "chart_money",
                             "api": {
-                                "url": "/admin/home/chart-money",
+                                "url": "/backend/llm-usage/chart-money",
                                 "method": "get",
                                 "data": {
                                     "before_num": "$before_num",

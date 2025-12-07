@@ -1,4 +1,5 @@
 import yaml
+import os
 
 
 class Settings():
@@ -15,6 +16,7 @@ class Settings():
         self.MYSQL_USER = yaml_config['database']['mysql']['user']
         self.MYSQL_PASSWORD = yaml_config['database']['mysql']['password']
         self.MYSQL_DATABASE = yaml_config['database']['mysql']['database']
+        self.PROJECT_PATH = os.path.dirname(__file__)
         print()
 
 
