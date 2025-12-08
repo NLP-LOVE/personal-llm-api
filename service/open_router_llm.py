@@ -1,0 +1,36 @@
+import json
+
+import httpx
+
+from service.llm_service import LLMService
+
+# OpenRouter供应商模型接口
+# https://openrouter.ai/docs/usage/chat-completions
+class OpenRouterLLMService(LLMService):
+
+    async def get_usage(self, response, params, answer):
+        if response['usage']:
+            return {'completion_tokens': response['usage']['completion_tokens'], 'prompt_tokens': response['usage']['prompt_tokens'], 'total_tokens': response['usage']['total_tokens']}
+        else:
+            payload = {
+                "id": params['id']
+            }
+
+            headers = {
+                "Authorization": f"Bearer {self.key}"
+            }
+
+            # 异步请求session
+            async with httpx.AsyncClient() as client:
+                res = await client.get(f"{self.base_url.replace('/chat/completions', '/generation')}", json=payload, headers=headers)
+
+            res = res.json()
+
+            data = {}
+            data['prompt_tokens'] = res['data']['tokens_prompt']
+            data['completion_tokens'] = res['data']['tokens_completion']
+            data['total_tokens'] = data['prompt_tokens'] + data['completion_tokens']
+            return data
+
+
+

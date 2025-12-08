@@ -1,12 +1,10 @@
 import datetime
-import asyncio
-import decimal
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field, validator
 
-from utils.util import get_before_timestamp, get_before_month, require_auth, get_before_date, get_current_timestamp
+from utils.util import get_before_timestamp, get_before_month, require_auth, get_before_day, get_current_timestamp
 from utils.mysql_client import db_client
 
 router = APIRouter(prefix="/backend/llm-usage", tags=["backend-llm-usage"])
@@ -54,38 +52,37 @@ def get_day_params(params):
         # 格式化time_stamp时间戳
         xAxis.append(datetime.datetime.fromtimestamp(time_stamp).strftime(format_str))
         yAxis.append(0)
-    time_stamp = get_before_date(params.before_num - 1) + ' 00:00:00'
+    date_str = get_before_day(params.before_num - 1) + ' 00:00:00'
     search_column_name = 'create_day'
 
-    return xAxis, yAxis, time_stamp, search_column_name
+    return xAxis, yAxis, date_str, search_column_name
 
 def get_month_params(params):
     xAxis = []
     yAxis = []
     format_str = '%Y-%m'
     for i in range(params.before_num - 1, -1, -1):
-        time_stamp = get_before_month(i)
-        # 格式化time_stamp时间戳
-        tmp = datetime.datetime.fromtimestamp(time_stamp)
-        xAxis.append(datetime.datetime.fromtimestamp(time_stamp).strftime(format_str))
+        month_str = get_before_month(i)
+
+        xAxis.append(month_str)
         yAxis.append(0)
-    time_stamp = get_before_month(params.before_num - 1) + ' 00:00:00'
+    date_str = get_before_month(params.before_num - 1) + ' 00:00:00'
     search_column_name = 'create_month'
 
-    return xAxis, yAxis, time_stamp, search_column_name
+    return xAxis, yAxis, date_str, search_column_name
 
 def get_year_params(params):
     xAxis = []
     yAxis = []
     for i in range(params.before_num - 1, -1, -1):
         current_year = get_current_timestamp()[:4]
-        # 格式化time_stamp时间戳
+
         xAxis.append(str(int(current_year) - i))
         yAxis.append(0)
-    time_stamp = f'{int(current_year) - params.before_num + 1}-01-01 00:00:00'
+    date_str = f'{int(current_year) - params.before_num + 1}-01-01 00:00:00'
     search_column_name = 'create_year'
 
-    return xAxis, yAxis, time_stamp, search_column_name
+    return xAxis, yAxis, date_str, search_column_name
 
 @router.get("/chart-request")
 @require_auth
@@ -95,18 +92,18 @@ async def chart_request(request: Request, params: ChartBase = Depends(get_chart_
     yAxis = []
 
     if params.unit_type == 'day':
-        xAxis, yAxis, time_stamp, search_column_name = get_day_params(params)
+        xAxis, yAxis, date_str, search_column_name = get_day_params(params)
 
     elif params.unit_type == 'month':
-        xAxis, yAxis, time_stamp, search_column_name = get_month_params(params)
+        xAxis, yAxis, date_str, search_column_name = get_month_params(params)
 
     else:
-        xAxis, yAxis, time_stamp, search_column_name = get_year_params(params)
+        xAxis, yAxis, date_str, search_column_name = get_year_params(params)
 
     sql = f"""
         SELECT {search_column_name}, COUNT(*) AS count
         FROM llm_chat_history
-        WHERE create_time >= '{time_stamp}'
+        WHERE create_time >= '{date_str}'
         GROUP BY {search_column_name} order by {search_column_name}
     """
 
@@ -170,34 +167,34 @@ async def chart_token(request: Request, params: ChartBase = Depends(get_chart_pa
             xAxis.append(datetime.datetime.fromtimestamp(time_stamp).strftime(format_str))
             yAxis_prompt.append(0)
             yAxis_completion.append(0)
-        time_stamp = get_before_date(int(params.before_num) - 1) + ' 00:00:00'
+        date_str = get_before_day(int(params.before_num) - 1) + ' 00:00:00'
         search_column_name = 'create_day'
 
     elif params.unit_type == 'month':
         format_str = '%Y-%m'
         for i in range(params.before_num - 1, -1, -1):
-            time_stamp = get_before_month(i)
-            # 格式化time_stamp时间戳
-            xAxis.append(datetime.datetime.fromtimestamp(time_stamp).strftime(format_str))
+            month_str = get_before_month(i)
+
+            xAxis.append(month_str)
             yAxis_prompt.append(0)
             yAxis_completion.append(0)
-        time_stamp = get_before_month(params.before_num - 1) + ' 00:00:00'
+        date_str = get_before_month(params.before_num - 1) + ' 00:00:00'
         search_column_name = 'create_month'
 
     else:
         for i in range(params.before_num - 1, -1, -1):
             current_year = get_current_timestamp()[:4]
-            # 格式化time_stamp时间戳
+
             xAxis.append(str(int(current_year) - i))
             yAxis_prompt.append(0)
             yAxis_completion.append(0)
-        time_stamp = f'{int(current_year) - params.before_num + 1}-01-01 00:00:00'
+        date_str = f'{int(current_year) - params.before_num + 1}-01-01 00:00:00'
         search_column_name = 'create_year'
 
     sql = f"""
         SELECT {search_column_name}, SUM(prompt_tokens) AS prompt_tokens, SUM(completion_tokens) AS completion_tokens
         FROM llm_chat_history
-        WHERE create_time >= '{time_stamp}'
+        WHERE create_time >= '{date_str}'
         GROUP BY {search_column_name} order by {search_column_name}
     """
 
@@ -264,18 +261,18 @@ async def chart_money(request: Request, params: ChartBase = Depends(get_chart_pa
     yAxis = []
 
     if params.unit_type == 'day':
-        xAxis, yAxis, time_stamp, search_column_name = get_day_params(params)
+        xAxis, yAxis, date_str, search_column_name = get_day_params(params)
 
     elif params.unit_type == 'month':
-        xAxis, yAxis, time_stamp, search_column_name = get_month_params(params)
+        xAxis, yAxis, date_str, search_column_name = get_month_params(params)
 
     else:
-        xAxis, yAxis, time_stamp, search_column_name = get_year_params(params)
+        xAxis, yAxis, date_str, search_column_name = get_year_params(params)
 
     sql = f"""
         SELECT {search_column_name}, SUM(input_price) AS input_price, SUM(output_price) AS output_price
         FROM llm_chat_history
-        WHERE create_time >= '{time_stamp}'
+        WHERE create_time >= '{date_str}'
         GROUP BY {search_column_name} order by {search_column_name}
     """
 

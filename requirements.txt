@@ -7,3 +7,6 @@ loguru==0.7.3
 uvicorn==0.38.0
 python-multipart==0.0.20
 itsdangerous==2.2.0
+httpx==0.28.1
+dashscope==1.25.2
+tiktoken==0.12.0

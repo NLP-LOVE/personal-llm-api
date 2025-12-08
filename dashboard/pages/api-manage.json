@@ -11,7 +11,7 @@
                 "title": "新增模型供应商",
                 "body": {
                     "type": "form",
-                    "api": "post:/api-manage/provider/create",
+                    "api": "post:/backend/api-manage/provider/create",
                     "body": [
                         {
                             "type": "input-text",
@@ -25,13 +25,13 @@
                         },
                         {
                             "type": "input-text",
-                            "name": "service_key",
+                            "name": "api_key",
                             "label": "api-key"
                         },
                         {
                             "type": "input-text",
-                            "name": "service_url",
-                            "label": "服务url"
+                            "name": "base_url",
+                            "label": "base-url"
                         }
                     ]
                 }
@@ -39,7 +39,7 @@
         },
         {
             "type": "crud",
-            "api": "/api-manage/provider/list",
+            "api": "/backend/api-manage/provider/list",
             "syncLocation": false,
             "columns": [
                 {
@@ -55,8 +55,8 @@
                     "label": "供应商英文名称"
                 },
                 {
-                    "name": "service_url",
-                    "label": "服务url"
+                    "name": "base_url",
+                    "label": "base-url"
                 },
                 {
                     "name": "create_time",
@@ -75,7 +75,7 @@
                                 "title": "修改标签",
                                 "body": {
                                     "type": "form",
-                                    "api": "post:/api-manage/provider/update",
+                                    "api": "post:/backend/api-manage/provider/update",
                                     "body": [
                                         {
                                             "type": "input-text",
@@ -96,13 +96,13 @@
                                         },
                                         {
                                             "type": "input-text",
-                                            "name": "service_key",
+                                            "name": "api_key",
                                             "label": "api-key"
                                         },
                                         {
                                             "type": "input-text",
-                                            "name": "service_url",
-                                            "label": "服务url"
+                                            "name": "base_url",
+                                            "label": "base-url"
                                         }
                                     ]
                                 }
@@ -122,7 +122,7 @@
                 "title": "新增模型接口",
                 "body": {
                     "type": "form",
-                    "api": "post:/api-manage/model/create",
+                    "api": "post:/backend/api-manage/model/create",
                     "body": [
                         {
                             "type": "input-text",
@@ -132,17 +132,12 @@
                         {
                             "type": "input-text",
                             "name": "model_name",
-                            "label": "model_name"
+                            "label": "模型名称"
                         },
                         {
                             "type": "input-text",
-                            "name": "model_version_name",
-                            "label": "model_version_name"
-                        },
-                        {
-                            "type": "input-text",
-                            "name": "model_short_name",
-                            "label": "model_short_name"
+                            "name": "model_id",
+                            "label": "模型ID"
                         },
                         {
                             "type": "input-text",
@@ -160,18 +155,64 @@
         },
         {
             "type": "crud",
-            "api": "/api-manage/model/list",
+            "api": "/backend/api-manage/model/list",
             "syncLocation": false,
             "columns": [
                 {
                     "name": "status",
                     "type": "switch",
-                    "label": "状态",
+                    "label": "可用状态",
                     "onEvent": {
-                        "change": {
-                            "actions": [
-                            ]
-                        }
+                      "change": {
+                        "weight": 0,
+                        "actions": [
+                          {
+                            "actionType": "confirmDialog",
+                            "dialog": {
+                              "type": "dialog",
+                              "title": "确认修改状态",
+                              "body": [
+                                {
+                                  "type": "tpl",
+                                  "tpl": "确定要修改状态吗？",
+                                  "wrapperComponent": "",
+                                  "inline": false,
+                                  "id": "u:1965506c7599"
+                                }
+                              ],
+                              "showCloseButton": true,
+                              "showErrorMsg": true,
+                              "showLoading": true,
+                              "className": "app-popover",
+                              "id": "u:d9783223df98",
+                              "actions": [
+                                {
+                                  "type": "button",
+                                  "actionType": "cancel",
+                                  "label": "取消",
+                                  "id": "u:302efee8613b"
+                                },
+                                {
+                                  "type": "button",
+                                  "actionType": "confirm",
+                                  "label": "确定",
+                                  "primary": true,
+                                  "id": "u:4a4d63cf35e1"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "actionType": "ajax",
+                            "outputVar": "responseResult",
+                            "options": {},
+                            "api": {
+                              "method": "get",
+                              "url": "/backend/api-manage/model/update-status?id=${id}"
+                            }
+                          }
+                        ]
+                      }
                     }
                 },
                 {
@@ -184,17 +225,12 @@
                 },
                 {
                     "name": "model_name",
-                    "label": "model_name",
+                    "label": "模型名称",
                     "copyable": true
                 },
                 {
-                    "name": "model_version_name",
-                    "label": "model_version_name",
-                    "copyable": true
-                },
-                {
-                    "name": "model_short_name",
-                    "label": "model_short_name",
+                    "name": "model_id",
+                    "label": "模型ID",
                     "copyable": true
                 },
                 {
@@ -222,7 +258,7 @@
                                 "title": "修改标签",
                                 "body": {
                                     "type": "form",
-                                    "api": "post:/api-manage/model/update",
+                                    "api": "post:/backend/api-manage/model/update",
                                     "body": [
                                         {
                                             "type": "input-text",
@@ -233,7 +269,7 @@
                                         {
                                             "name": "status",
                                             "type": "switch",
-                                            "label": "状态"
+                                            "label": "可用状态"
                                         },
                                         {
                                             "type": "input-text",
@@ -244,17 +280,12 @@
                                         {
                                             "type": "input-text",
                                             "name": "model_name",
-                                            "label": "model_name"
+                                            "label": "模型名称"
                                         },
                                         {
                                             "type": "input-text",
-                                            "name": "model_version_name",
-                                            "label": "model_version_name"
-                                        },
-                                        {
-                                            "type": "input-text",
-                                            "name": "model_short_name",
-                                            "label": "model_short_name"
+                                            "name": "model_id",
+                                            "label": "模型ID"
                                         },
                                         {
                                             "type": "input-text",

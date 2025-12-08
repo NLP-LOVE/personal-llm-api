@@ -24,16 +24,22 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 
 
-from init import init_db
+from init import init_db, init_models
 from config import settings
 from backend.backend_api import backend_router
 from backend.llm_usage import router as llm_usage_router
+from backend.api_manage import router as api_router
 
 
+async def init_app():
+    # 初始化数据库
+    await init_db()
+    # 初始化模型
+    await init_models()
 
+# 初始化
+asyncio.run(init_app())
 
-# 初始化数据库
-asyncio.run(init_db())
 
 
 # 创建FastAPI应用实例
@@ -67,6 +73,7 @@ app.mount("/static", StaticFiles(directory="static/"), name="static1")
 # 挂载后端路由
 app.include_router(backend_router)
 app.include_router(llm_usage_router)
+app.include_router(api_router)
 
 
 

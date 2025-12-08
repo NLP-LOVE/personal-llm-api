@@ -29,7 +29,7 @@
                         "icon": "fa fa-bolt",
                         "schemaApi": {
                             "method": "get",
-                            "url": "/static/pages/api-manage.json",
+                            "url": "/dashboard/pages/api-manage.json",
                             "headers": {
                                 "Cache-Control": "no-cache"
                             }

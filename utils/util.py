@@ -2,11 +2,10 @@ import datetime
 import time
 import threading
 import hashlib
-import asyncio
-import traceback
 from functools import wraps
 
 import pytz
+from pydantic import BaseModel, validator
 from fastapi import Request
 from fastapi.exceptions import HTTPException
 
@@ -33,7 +32,7 @@ def get_before_timestamp(days):
     before_time = int((today_start - datetime.timedelta(days=int(days))).timestamp())
     return before_time
 
-def get_before_date(days):
+def get_before_day(days):
     # 获取当前日期
     now = datetime.datetime.now()
     # 获取今天的0点时间
@@ -139,3 +138,25 @@ def require_auth(func):
         return await func(*args, **kwargs)
 
     return wrapper
+
+# 验证分页参数
+class PaginationParams(BaseModel):
+    page: int = 1
+    perPage: int = 10
+
+    @validator('page')
+    def validate_page(cls, v):
+        """分页参数验证"""
+        if v <= 0:
+            raise ValueError('分页参数page必须大于0')
+        return v
+
+    @validator('perPage')
+    def validate_perPage(cls, v):
+        """分页参数验证"""
+        if v <= 0:
+            raise ValueError('分页参数page_size必须大于0')
+        return v
+
+def get_page_params(page: int, perPage: int):
+    return PaginationParams(page=page, perPage=perPage)
