@@ -86,6 +86,7 @@ create table llm_api_keys
     api_key     varchar(100)           null,
     remark      varchar(150)           null,
     is_use      tinyint  default 1     null comment '是否可用',
+    is_delete   tinyint  default 0     null comment '是否删除',
     create_time datetime default now() null,
     update_time datetime default now() null
 )
@@ -96,6 +97,9 @@ create index llm_api_keys_api_key_index
 
 create index llm_api_keys_is_use_index
     on llm_api_keys (is_use);
+
+create index llm_api_keys_is_delete_index
+    on llm_api_keys (is_delete);
 
 
 

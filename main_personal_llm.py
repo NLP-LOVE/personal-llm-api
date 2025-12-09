@@ -1,5 +1,6 @@
 import os
 import asyncio
+import json
 
 from loguru import logger
 current_file_path = os.path.abspath(__file__)
@@ -17,18 +18,20 @@ logger.add(
 import uvicorn
 from fastapi import FastAPI, Request, APIRouter
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse, FileResponse
+from fastapi.responses import RedirectResponse, FileResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 
 
-from init import init_db, init_models
+from init import init_db, init_models, get_model
 from config import settings
+from utils.mysql_client import db_client
 from backend.backend_api import backend_router
 from backend.llm_usage import router as llm_usage_router
 from backend.api_manage import router as api_router
+from backend.chat import router as chat_router
 
 
 async def init_app():
@@ -74,6 +77,7 @@ app.mount("/static", StaticFiles(directory="static/"), name="static1")
 app.include_router(backend_router)
 app.include_router(llm_usage_router)
 app.include_router(api_router)
+app.include_router(chat_router)
 
 
 
@@ -93,24 +97,103 @@ async def validation_exception_handler(request, exc):
         content={"status": 1, "msg": errors[0]['message']}
     )
 
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc):
-    """HTTP异常处理器"""
-    return JSONResponse(
-        status_code=200,
-        content={"status": 1, "msg": exc.detail}
-    )
+# @app.exception_handler(HTTPException)
+# async def http_exception_handler(request, exc):
+#     """HTTP异常处理器"""
+#     return JSONResponse(
+#         status_code=200,
+#         content={"status": 1, "msg": exc.detail}
+#     )
 
 
-# 定义LLM接口
+async def chat_stream(model, params):
+
+    if 'tools' in params and params['tools'] and params['tools'][0]['type'] == 'web_search':
+        async for chunk in model.chat_stream_response(params):
+            ## sse返回数据
+            yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+    else:
+        async for chunk in model.chat_stream(params):
+            ## sse返回数据
+            yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+
+    # 完成
+    yield "data: [DONE]\n\n"
+
+
+# 校验api key是否存在
+async def check_api_key(api_key: str):
+    """校验api key是否存在"""
+    api_key = api_key.replace('Bearer ', '')
+    if not api_key or not api_key.startswith('sk-'):
+        raise HTTPException(status_code=401, detail='api key error!')
+
+    sql = f"SELECT 1 FROM llm_api_keys WHERE api_key = '{api_key}' and is_use = 1 and is_delete = 0"
+    result = await db_client.select(sql)
+    if not result:
+        raise HTTPException(status_code=401, detail='api key error!')
+
+# 参数校验
+def validate_chat_params(params: dict):
+    """校验chat参数"""
+    if 'model' not in params:
+        raise HTTPException(status_code=400, detail='model params error!')
+    model = get_model(params['model'])
+    if not model:
+        raise HTTPException(status_code=500, detail='model params error!')
+
+    if 'messages' not in params:
+        raise HTTPException(status_code=400, detail='messages params error!')
+    if not params['messages']:
+        raise HTTPException(status_code=400, detail='messages params error!')
+    if 'stream' in params and params['stream'] == True and 'stream_options' not in params:
+        params['stream_options'] = {'include_usage': True}
+
+    # 处理web_search参数
+    if 'web_search' in params:
+        params['tools'] = [{"type": "web_search"}]
+        del params['web_search']
+
+    # 补充extra body参数
+    if params['model'] == 'qwen3-235b-a22b' and ('stream' not in params or params['stream'] == False):
+        params['extra_body'] = {}
+        params['extra_body']['enable_thinking'] = False
+    elif 'enable_thinking' in params:
+        params['extra_body'] = {}
+        params['extra_body']['enable_thinking'] = params['enable_thinking']
+        del params['enable_thinking']
+    if 'thinking_budget' in params:
+        params['extra_body']['thinking_budget'] = params['thinking_budget']
+        del params['thinking_budget']
+
+    return params
+
+
+# 3. 定义路由和视图函数
 @app.post('/v1/chat/completions')
 @app.post('/chat/completions')
 async def chat_completions(request: Request):
+    # 校验key
+    api_key = request.headers.get('Authorization')
+    await check_api_key(api_key)
+
     # 接收请求体
     req = await request.json()
+    # 校验参数
+    req = validate_chat_params(req)
 
+    # 1. 获取模型
+    model = get_model(req['model'])
+    del req['model']
 
-    return {"Hello": "World"}
+    # 2. 判断是否是流式
+    if req.get('stream', False):
+        # 流式
+        return StreamingResponse(chat_stream(model, req), media_type="text/event-stream")
+    else:
+        # 非流式
+        answer = await model.chat(req)
+        return answer
 
 
 # 定义dashboard入口
@@ -134,9 +217,6 @@ async def dashboard(request: Request, path: str):
         return FileResponse(os.path.join(settings.PROJECT_PATH, 'dashboard', f'index.html'))
     else:
         return FileResponse(os.path.join(settings.PROJECT_PATH, 'dashboard', f'{path}'))
-
-
-    return {"Hello": "World"}
 
 
 

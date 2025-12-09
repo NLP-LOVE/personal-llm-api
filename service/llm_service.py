@@ -51,7 +51,7 @@ class LLMService(object):
         history['create_month'] = current_timestamp[0:7]
         history['create_year'] = current_timestamp[0:4]
 
-        await db_client.insert('chat_history', history)
+        await db_client.insert('llm_chat_history', history)
         return history
 
     async def update_tokens(self, history, response):
@@ -81,13 +81,15 @@ class LLMService(object):
         current_timestamp = get_current_timestamp()
         update_data['update_time'] = current_timestamp[0:-4]
 
-        await db_client.update('chat_history', update_data, f'id={history["id"]}')
+        await db_client.update('llm_chat_history', update_data, f'id={history["id"]}')
 
 
     async def chat(self, params):
         id = params.get('id', '')
         if id:
             del params['id']
+        else:
+            id = snowflake.next_id()
 
         history = await self.create_history(params)
         logger = Logger(self.provider_english_name, id)
@@ -119,6 +121,8 @@ class LLMService(object):
         id = params.get('id', '')
         if id:
             del params['id']
+        else:
+            id = snowflake.next_id()
 
         history = await self.create_history(params)
         logger = Logger(self.provider_english_name, id)

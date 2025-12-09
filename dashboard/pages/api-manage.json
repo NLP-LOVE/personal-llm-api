@@ -117,7 +117,7 @@
             "type": "button",
             "actionType": "dialog",
             "level": "primary",
-            "className": "m-b-sm",
+            "className": "m-b-sm mt-8",
             "dialog": {
                 "title": "新增模型接口",
                 "body": {

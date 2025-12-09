@@ -45,6 +45,19 @@ class MysqlClient(object):
                 await cur.execute(sql)
                 await conn.commit()
 
+    async def update(self, table_name, data:dict, where):
+        if self.pool is None:
+            await self.init_pool()
+
+        async with self.pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                if where:
+                    update_query = f'UPDATE {table_name} SET {", ".join([f"{key} = %s" for key in data.keys()])} WHERE {where}'
+                else:
+                    update_query = f'UPDATE {table_name} SET {", ".join([f"{key} = %s" for key in data.keys()])}'
+                await cur.execute(update_query, list(data.values()))
+                await conn.commit()
+
     # data 可以是 DataFrame 或 list of dict
     async def insert(self, table_name, data):
         if isinstance(data, pd.DataFrame):

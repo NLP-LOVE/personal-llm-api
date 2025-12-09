@@ -12,9 +12,9 @@
                 "label": "",
                 "children": [
                     {
-                        "label": "LLM使用量",
+                        "label": "LLM 使用量",
                         "url": "llm-usage",
-                        "icon": "fa fa-plus",
+                        "icon": "fa fa-bar-chart",
                         "schemaApi": {
                             "method": "get",
                             "url": "/dashboard/pages/llm-usage.json",
@@ -24,9 +24,9 @@
                         }
                     },
                     {
-                        "label": "接口管理",
+                        "label": "模型接口管理",
                         "url": "api-manage",
-                        "icon": "fa fa-bolt",
+                        "icon": "fa fa-database",
                         "schemaApi": {
                             "method": "get",
                             "url": "/dashboard/pages/api-manage.json",
@@ -36,36 +36,24 @@
                         }
                     },
                     {
-                        "label": "chat 历史",
+                        "label": "LLM key 管理",
+                        "url": "key-manage",
+                        "icon": "fa fa-address-card",
+                        "schemaApi": {
+                            "method": "get",
+                            "url": "/dashboard/pages/key-manage.json",
+                            "headers": {
+                                "Cache-Control": "no-cache"
+                            }
+                        }
+                    },
+                    {
+                        "label": "LLM 对话历史",
                         "url": "chat-history",
-                        "icon": "fa fa-bolt",
+                        "icon": "fa fa-history",
                         "schemaApi": {
                             "method": "get",
-                            "url": "/static/pages/chat-history.json",
-                            "headers": {
-                                "Cache-Control": "no-cache"
-                            }
-                        }
-                    },
-                    {
-                        "label": "prompt 管理",
-                        "url": "prompt-manage",
-                        "icon": "fa fa-bolt",
-                        "schemaApi": {
-                            "method": "get",
-                            "url": "/static/pages/prompt-manage.json",
-                            "headers": {
-                                "Cache-Control": "no-cache"
-                            }
-                        }
-                    },
-                    {
-                        "label": "数据库管理",
-                        "url": "db-manage",
-                        "icon": "fa fa-bolt",
-                        "schemaApi": {
-                            "method": "get",
-                            "url": "/static/pages/db-manage.json",
+                            "url": "/dashboard/pages/chat-history.json",
                             "headers": {
                                 "Cache-Control": "no-cache"
                             }

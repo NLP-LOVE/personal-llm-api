@@ -1,0 +1,108 @@
+{
+    "type": "page",
+    "body": {
+        "type": "crud",
+        "api": "/backend/chat/chat-history",
+        "columns": [
+            {
+                "name": "id",
+                "label": "ID"
+            },
+            {
+                "name": "model_name",
+                "label": "模型"
+            },
+            {
+                "name": "prompt",
+                "label": "prompt",
+                "textOverflow": "ellipsis"
+            },
+            {
+                "name": "prompt_tokens",
+                "label": "输入 token"
+            },
+            {
+                "name": "completion_tokens",
+                "label": "输出 token"
+            },
+            {
+                "name": "create_time",
+                "label": "时间"
+            },
+            {
+                "name": "duration",
+                "label": "耗时"
+            },
+            {
+                "type": "operation",
+                "label": "操作",
+                "buttons": [
+                    {
+                        "label": "查看",
+                        "type": "button",
+                        "actionType": "dialog",
+                        "dialog": {
+                            "size": "xl",
+                            "title": "对话记录",
+                            "body": [
+                                {
+                                    "type": "each",
+                                    "name": "context",
+                                    "items": [
+                                        {
+                                            "type": "flex",
+                                            "justify": "flex-start",
+                                            "items": [
+                                                {
+                                                    "type": "avatar",
+                                                    "text": "AM",
+                                                    "className": {
+                                                        "block": "${role == 'user'}",
+                                                        "hidden": "${role != 'user'}"
+                                                    },
+                                                    "style": {
+                                                        "background": "#DB3E35",
+                                                        "color": "#FFFFFF"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "avatar",
+                                                    "src": "/static/images/Chatgpt.png",
+                                                    "className": {
+                                                        "block": "${role != 'user'}",
+                                                        "hidden": "${role == 'user'}"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "tpl",
+                                                    "className": {
+                                                        "font-extrabold": "${true}",
+                                                        "mt-2": "${true}",
+                                                        "ml-2": "${true}",
+                                                        "text-lg": "${true}"
+                                                    },
+                                                    "text": "${role}"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "markdown",
+                                            "name": "content"
+                                        },
+                                        {
+                                            "type": "divider",
+                                            "className": {
+                                                "mt-10": "${true}",
+                                                "mb-10": "${true}"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

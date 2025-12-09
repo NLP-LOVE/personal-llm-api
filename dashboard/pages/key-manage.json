@@ -1,0 +1,123 @@
+{
+    "type": "page",
+    "body": [
+        {
+            "label": "新增 LLM key",
+            "type": "button",
+            "level": "primary",
+            "className": "m-b-sm",
+            "actionType": "ajax",
+            "api": "get:/backend/api-manage/key/create",
+            "reload": "key-crud"
+        },
+        {
+            "type": "crud",
+            "name": "key-crud",
+            "id": "key-crud",
+            "api": "/backend/api-manage/key/list",
+            "syncLocation": false,
+            "columns": [
+                {
+                    "name": "status",
+                    "type": "switch",
+                    "label": "可用状态",
+                    "onEvent": {
+                      "change": {
+                        "weight": 0,
+                        "actions": [
+                          {
+                            "actionType": "confirmDialog",
+                            "dialog": {
+                              "type": "dialog",
+                              "title": "确认修改状态",
+                              "body": [
+                                {
+                                  "type": "tpl",
+                                  "tpl": "确定要修改状态吗？",
+                                  "wrapperComponent": "",
+                                  "inline": false,
+                                  "id": "u:1965506c7599"
+                                }
+                              ],
+                              "showCloseButton": true,
+                              "showErrorMsg": true,
+                              "showLoading": true,
+                              "className": "app-popover",
+                              "id": "u:d9783223df98",
+                              "actions": [
+                                {
+                                  "type": "button",
+                                  "actionType": "cancel",
+                                  "label": "取消",
+                                  "id": "u:302efee8613b"
+                                },
+                                {
+                                  "type": "button",
+                                  "actionType": "confirm",
+                                  "label": "确定",
+                                  "primary": true,
+                                  "id": "u:4a4d63cf35e1"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "actionType": "ajax",
+                            "outputVar": "responseResult",
+                            "options": {},
+                            "api": {
+                              "method": "get",
+                              "url": "/backend/api-manage/key/update-status?id=${id}"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                },
+                {
+                    "name": "row_id",
+                    "label": "ID"
+                },
+                {
+                    "name": "api_key",
+                    "label": "LLM key",
+                    "copyable": true
+                },
+                {
+                    "name": "remark",
+                    "label": "备注",
+                    "quickEdit": {
+                      "saveImmediately": {
+                        "api": {
+                          "url": "/backend/api-manage/key/update-remark",
+                          "method": "post",
+                          "data": {
+                            "id": "${id}",
+                            "remark": "${remark}"
+                          }
+                        }
+                      }
+                    }
+                },
+                {
+                    "name": "create_time",
+                    "label": "创建时间"
+                },
+                {
+                    "type": "operation",
+                    "label": "操作",
+                    "buttons": [
+                        {
+                          "label": "删除",
+                          "type": "button",
+                          "actionType": "ajax",
+                          "confirmText": "确认要删除？",
+                          "api": "get:/backend/api-manage/key/delete?id=${id}",
+                          "reload": "key-crud"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
