@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>amis admin</title>
+    <title>personal LLM Manage</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta
       name="viewport"
@@ -29,6 +29,7 @@
         height: 100%;
         margin: 0;
         padding: 0;
+        font-size: 20px;
       }
     </style>
   </head>
@@ -45,16 +46,16 @@
 
         const app = {
           type: 'app',
-          brandName: 'Admin',
-          logo: '/public/logo.png',
+          brandName: 'LLM Manage',
+          logo: '/static/images/logo.png',
           header: {
             type: 'tpl',
             inline: false,
             className: 'w-full',
             tpl: '<div class="flex justify-between"><div></div><div></div></div>'
           },
-          // footer: '<div class="p-2 text-center bg-light">底部区域</div>',
-          // asideBefore: '<div class="p-2 text-center">菜单前面区域</div>',
+          footer: '<div class="p-2 text-center bg-light">powered by <a href="https://aisuda.github.io/amis-1.1.7/zh-CN/docs/index" target="_blank">amis-6.13.0</a></div>',
+          asideBefore: '<div class="p-2 text-center"></div>',
           // asideAfter: '<div class="p-2 text-center">菜单后面区域</div>',
           api: {
             "method": "get",

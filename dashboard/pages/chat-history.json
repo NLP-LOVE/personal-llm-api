@@ -55,14 +55,15 @@
                                             "items": [
                                                 {
                                                     "type": "avatar",
-                                                    "text": "AM",
+                                                    "src": "/static/images/user.png",
                                                     "className": {
                                                         "block": "${role == 'user'}",
                                                         "hidden": "${role != 'user'}"
                                                     },
                                                     "style": {
                                                         "background": "#DB3E35",
-                                                        "color": "#FFFFFF"
+                                                        "color": "#FFFFFF",
+                                                        "margin-bottom": "10px"
                                                     }
                                                 },
                                                 {

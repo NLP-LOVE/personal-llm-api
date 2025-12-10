@@ -59,6 +59,8 @@ class LLMService(object):
         reasoning_content = response['choices'][0]['message'].get('reasoning_content', '')
         if reasoning_content:
             reasoning_content = f'<think>\n{reasoning_content}\n</think>\n'
+        else:
+            reasoning_content = ''
 
         update_data = {}
         if response['usage']:
@@ -92,7 +94,7 @@ class LLMService(object):
             id = snowflake.next_id()
 
         history = await self.create_history(params)
-        logger = Logger(self.provider_english_name, id)
+        logger = Logger(self.model_name, id)
         logger.info(f"chat start")
 
         # httpx异步请求
@@ -125,7 +127,7 @@ class LLMService(object):
             id = snowflake.next_id()
 
         history = await self.create_history(params)
-        logger = Logger(self.provider_english_name, id)
+        logger = Logger(self.model_name, id)
         logger.info(f"chat start")
 
 

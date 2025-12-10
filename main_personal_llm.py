@@ -1,6 +1,7 @@
 import os
 import asyncio
 import json
+import traceback
 
 from loguru import logger
 current_file_path = os.path.abspath(__file__)
@@ -16,7 +17,7 @@ logger.add(
 
 # 导入FastAPI
 import uvicorn
-from fastapi import FastAPI, Request, APIRouter
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse, FileResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -97,28 +98,25 @@ async def validation_exception_handler(request, exc):
         content={"status": 1, "msg": errors[0]['message']}
     )
 
-# @app.exception_handler(HTTPException)
-# async def http_exception_handler(request, exc):
-#     """HTTP异常处理器"""
-#     return JSONResponse(
-#         status_code=200,
-#         content={"status": 1, "msg": exc.detail}
-#     )
-
 
 async def chat_stream(model, params):
 
-    if 'tools' in params and params['tools'] and params['tools'][0]['type'] == 'web_search':
-        async for chunk in model.chat_stream_response(params):
-            ## sse返回数据
-            yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
-    else:
-        async for chunk in model.chat_stream(params):
-            ## sse返回数据
-            yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+    try:
+        if 'tools' in params and params['tools'] and params['tools'][0]['type'] == 'web_search':
+            async for chunk in model.chat_stream_response(params):
+                ## sse返回数据
+                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+        else:
+            async for chunk in model.chat_stream(params):
+                ## sse返回数据
+                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
 
-    # 完成
-    yield "data: [DONE]\n\n"
+        # 完成
+        yield "data: [DONE]\n\n"
+
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # 校验api key是否存在
@@ -149,23 +147,6 @@ def validate_chat_params(params: dict):
     if 'stream' in params and params['stream'] == True and 'stream_options' not in params:
         params['stream_options'] = {'include_usage': True}
 
-    # 处理web_search参数
-    if 'web_search' in params:
-        params['tools'] = [{"type": "web_search"}]
-        del params['web_search']
-
-    # 补充extra body参数
-    if params['model'] == 'qwen3-235b-a22b' and ('stream' not in params or params['stream'] == False):
-        params['extra_body'] = {}
-        params['extra_body']['enable_thinking'] = False
-    elif 'enable_thinking' in params:
-        params['extra_body'] = {}
-        params['extra_body']['enable_thinking'] = params['enable_thinking']
-        del params['enable_thinking']
-    if 'thinking_budget' in params:
-        params['extra_body']['thinking_budget'] = params['thinking_budget']
-        del params['thinking_budget']
-
     return params
 
 
@@ -192,7 +173,11 @@ async def chat_completions(request: Request):
         return StreamingResponse(chat_stream(model, req), media_type="text/event-stream")
     else:
         # 非流式
-        answer = await model.chat(req)
+        try:
+            answer = await model.chat(req)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            raise HTTPException(status_code=500, detail=str(e))
         return answer
 
 

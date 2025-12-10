@@ -16,7 +16,7 @@ async def init_db():
     sql = 'SELECT 1 FROM information_schema.tables WHERE table_name = "llm_provider"'
     result = await db_client.select(sql)
     if not result:
-        logger.info('数据库未初始化，开始初始化')
+        logger.info('数据库未初始化，开始初始化...')
 
         # 读取sql文件
         with open('init.sql', 'r', encoding='utf-8') as f:
