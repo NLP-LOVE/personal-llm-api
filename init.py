@@ -39,7 +39,7 @@ async def init_models():
     # 1. 查询模型和key
     sql = 'select * from llm_model ' + \
           'left join llm_provider on llm_provider.provider_english_name=llm_model.provider_english_name ' + \
-          'where status=1 and llm_provider.provider_name is not null'
+          'where status=1 and llm_model.is_delete=0 and llm_provider.provider_name is not null'
 
     db_client = MysqlClient(settings.MYSQL_HOST, settings.MYSQL_PORT, settings.MYSQL_USER, settings.MYSQL_PASSWORD, settings.MYSQL_DATABASE)
     models_list = await db_client.select(sql)
@@ -56,7 +56,7 @@ async def init_models():
         params['input_unit_price'] = model['input_unit_price']
         params['output_unit_price'] = model['output_unit_price']
 
-        if model['provider_english_name'] == 'byte_dance':
+        if model['provider_english_name'] == 'ByteDance':
             llm_service = ByteLLMService(**params)
 
         elif model['provider_english_name'] == 'qwen':

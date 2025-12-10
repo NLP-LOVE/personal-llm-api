@@ -71,19 +71,49 @@ async def provider_create(request: Request, params: ProviderBase):
 @require_auth
 async def provider_list(request: Request, params: PaginationParams = Depends(get_page_params)):
 
-    sql = f'select * from llm_provider order by id desc limit {(params.page - 1) * params.perPage},{params.perPage}'
+    sql = f'select * from llm_provider where is_delete=0 order by id desc limit {(params.page - 1) * params.perPage},{params.perPage}'
     result = await db_client.select(sql)
     for i, item in enumerate(result):
         item['row_id'] = i + 1 + (params.page - 1) * params.perPage
         item['id'] = str(item['id'])
         item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
 
-    sql = 'select count(*) as cou from llm_provider'
+    sql = 'select count(*) as cou from llm_provider where is_delete=0'
     total = await db_client.select(sql)
     total = total[0]['cou']
 
     data = {'status':0, 'msg':'', 'data':{'count':total, 'rows':result}}
     return data
+
+@router.get("/provider/select")
+@require_auth
+async def provider_select(request: Request):
+
+    sql = f'select provider_english_name from llm_provider where is_delete=0 order by id asc'
+    result = await db_client.select(sql)
+    options = []
+    for item in result:
+        options.append({'label':item['provider_english_name'], 'value':item['provider_english_name']})
+
+    data = {'status':0, 'msg':'', 'data':options}
+    return data
+
+@router.get("/provider/delete")
+@require_auth
+async def provider_delete(request: Request):
+    # 获取参数
+    request_data = request.query_params._dict
+    if not request_data.get('id', None):
+        return {"status": 1, "msg": "错误！", "data": {}}
+
+    # 更新is_delete
+    current_timestamp = get_current_timestamp()[:-4]
+    sql = f"update llm_provider set is_delete=1, update_time=\"{current_timestamp}\" where id={request_data['id']};\n"
+    sql += f"update llm_model set is_delete=1, update_time=\"{current_timestamp}\" where provider_english_name=(select provider_english_name from llm_provider where id={request_data['id']});"
+    await db_client.execute(sql)
+
+    await init_models()
+    return {"status": 0, "msg": "删除成功", "data": {}}
 
 # 更新供应商
 @router.post("/provider/update")
@@ -187,7 +217,7 @@ async def model_create(request: Request, params: ModelBase):
 @require_auth
 async def model_list(request: Request, params: PaginationParams = Depends(get_page_params)):
 
-    sql = f'select * from llm_model order by id desc limit {(params.page - 1) * params.perPage},{params.perPage}'
+    sql = f'select * from llm_model where is_delete=0 order by id desc limit {(params.page - 1) * params.perPage},{params.perPage}'
     result = await db_client.select(sql)
     for i, item in enumerate(result):
         item['row_id'] = i + 1 + (params.page - 1) * params.perPage
@@ -195,7 +225,7 @@ async def model_list(request: Request, params: PaginationParams = Depends(get_pa
         item['status'] = True if item['status'] == 1 else False
         item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
 
-    sql = 'select count(*) as cou from llm_model'
+    sql = 'select count(*) as cou from llm_model where is_delete=0'
     total = await db_client.select(sql)
     total = total[0]['cou']
 
@@ -252,6 +282,22 @@ async def model_update_status(request: Request):
 
     await init_models()
     return {"status": 0, "msg": "修改成功", "data": {}}
+
+@router.get("/model/delete")
+@require_auth
+async def model_delete(request: Request):
+    # 获取参数
+    request_data = request.query_params._dict
+    if not request_data.get('id', None):
+        return {"status": 1, "msg": "错误！", "data": {}}
+
+    # 更新is_delete
+    current_timestamp = get_current_timestamp()[:-4]
+    sql = f"update llm_model set is_delete=1, update_time=\"{current_timestamp}\" where id={request_data['id']}"
+    await db_client.execute(sql)
+
+    await init_models()
+    return {"status": 0, "msg": "删除成功", "data": {}}
 
 
 @router.get("/key/list")

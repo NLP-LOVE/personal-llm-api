@@ -5,13 +5,15 @@ create table if not exists llm_provider
     provider_english_name VARCHAR(50)  null comment 'LLM提供商英文名',
     api_key               VARCHAR(100) null,
     base_url              VARCHAR(100) null,
+    is_delete             TINYINT default 0 null comment '是否删除, 0: 未删除, 1: 删除',
     create_time           DATETIME null,
     update_time           DATETIME null
 ) comment 'LLM提供商表';
 
 INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786254914769649664, '深度求索', 'DeepSeek', 'test', 'https://api.deepseek.com', '2025-12-09 23:36:19', '2025-12-10 22:06:27');
 INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786594449739218944, '火山云', 'ByteDance', 'test', 'https://ark.cn-beijing.volces.com/api/v3', '2025-12-10 22:05:31', '2025-12-10 22:05:31');
-
+INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608631641538560, '阿里云', 'ALiYun', 'test', 'https://dashscope.aliyuncs.com/compatible-mode/v1', '2025-12-10 23:01:52', '2025-12-10 23:01:52');
+INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608813334593536, 'OpenRouter', 'OpenRouter', 'test', 'https://openrouter.ai/api/v1', '2025-12-10 23:02:35', '2025-12-10 23:02:35');
 
 create table if not exists llm_model
 (
@@ -22,6 +24,7 @@ create table if not exists llm_model
     input_unit_price      FLOAT null comment 'LLM模型输入单价',
     output_unit_price     FLOAT null comment 'LLM模型输出单价',
     status                TINYINT      null comment 'LLM模型状态, 0: 禁用, 1: 启用',
+    is_delete             TINYINT default 0 null comment '是否删除, 0: 未删除, 1: 删除',
     create_time           DATETIME null,
     update_time           DATETIME null
 ) comment 'LLM模型表';

@@ -39,6 +39,7 @@
         },
         {
             "type": "crud",
+            "name": "provider-crud",
             "api": "/backend/api-manage/provider/list",
             "syncLocation": false,
             "columns": [
@@ -107,6 +108,14 @@
                                     ]
                                 }
                             }
+                        },
+                        {
+                          "label": "删除",
+                          "type": "button",
+                          "actionType": "ajax",
+                          "confirmText": "确认要删除？",
+                          "api": "get:/backend/api-manage/provider/delete?id=${id}",
+                          "reload": "provider-crud,model-crud"
                         }
                     ]
                 }
@@ -125,9 +134,10 @@
                     "api": "post:/backend/api-manage/model/create",
                     "body": [
                         {
-                            "type": "input-text",
-                            "name": "provider_english_name",
-                            "label": "供应商英文名称"
+                          "label": "供应商英文名称",
+                          "type": "select",
+                          "name": "provider_english_name",
+                          "source": "/backend/api-manage/provider/select"
                         },
                         {
                             "type": "input-text",
@@ -155,6 +165,7 @@
         },
         {
             "type": "crud",
+            "name": "model-crud",
             "api": "/backend/api-manage/model/list",
             "syncLocation": false,
             "columns": [
@@ -272,10 +283,10 @@
                                             "label": "可用状态"
                                         },
                                         {
-                                            "type": "input-text",
-                                            "name": "provider_english_name",
-                                            "label": "供应商英文名称"
-
+                                          "label": "供应商英文名称",
+                                          "type": "select",
+                                          "name": "provider_english_name",
+                                          "source": "/backend/api-manage/provider/select"
                                         },
                                         {
                                             "type": "input-text",
@@ -300,6 +311,14 @@
                                     ]
                                 }
                             }
+                        },
+                        {
+                          "label": "删除",
+                          "type": "button",
+                          "actionType": "ajax",
+                          "confirmText": "确认要删除？",
+                          "api": "get:/backend/api-manage/model/delete?id=${id}",
+                          "reload": "model-crud"
                         }
                     ]
                 }
