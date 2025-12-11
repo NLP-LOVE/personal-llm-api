@@ -126,10 +126,12 @@ async def check_api_key(api_key: str):
     if not api_key or not api_key.startswith('sk-'):
         raise HTTPException(status_code=401, detail='api key error!')
 
-    sql = f"SELECT 1 FROM llm_api_keys WHERE api_key = '{api_key}' and is_use = 1 and is_delete = 0"
+    sql = f"SELECT api_key_id FROM llm_api_keys WHERE api_key = '{api_key}' and is_use = 1 and is_delete = 0"
     result = await db_client.select(sql)
     if not result:
         raise HTTPException(status_code=401, detail='api key error!')
+
+    return result[0]['api_key_id']
 
 # 参数校验
 def validate_chat_params(params: dict):
@@ -156,12 +158,13 @@ def validate_chat_params(params: dict):
 async def chat_completions(request: Request):
     # 校验key
     api_key = request.headers.get('Authorization')
-    await check_api_key(api_key)
+    api_key_id = await check_api_key(api_key)
 
     # 接收请求体
     req = await request.json()
     # 校验参数
     req = validate_chat_params(req)
+    req['api_key_id'] = api_key_id
 
     # 1. 获取模型
     model = get_model(req['model'])

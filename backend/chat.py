@@ -13,7 +13,7 @@ router = APIRouter(prefix="/backend/chat", tags=["chat"])
 async def chat_history(request: Request, params: PaginationParams = Depends(get_page_params)):
     # 分页查询
 
-    sql = f"""SELECT * FROM llm_chat_history ORDER BY id DESC LIMIT {(params.page - 1) * params.perPage},{params.perPage}"""
+    sql = f"""SELECT * FROM llm_chat_history where id=786892015915761665 ORDER BY id DESC LIMIT {(params.page - 1) * params.perPage},{params.perPage}"""
 
     data_list = await db_client.select(sql)
 
@@ -40,6 +40,17 @@ async def chat_history(request: Request, params: PaginationParams = Depends(get_
             if 'content' in context_item and context_item['content']:
                 if '<think>' in context_item['content']:
                     context_item['content'] = context_item['content'].replace('<think>', '\n## <think>\n').replace('</think>', '\n## </think>\n')
+
+                # 处理多模态
+                if isinstance(context_item['content'], list):
+                    context_list = []
+                    for obj in context_item['content']:
+                        if 'text' in obj:
+                            context_list.append(obj['text'])
+                        elif 'image_url' in obj:
+                            context_list.append(f'![image]({obj["image_url"]["url"]})')
+                    context_item['content'] = '\n\n\n'.join(context_list)
+
             elif 'tool_calls' in context_item:
                 context_item['content'] = json.dumps(context_item['tool_calls'], ensure_ascii=False, indent=4)
             elif 'function' in context_item:

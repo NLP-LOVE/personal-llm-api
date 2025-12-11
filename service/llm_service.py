@@ -41,10 +41,19 @@ class LLMService(object):
         history['id'] = snowflake.next_id()
         context = params['messages'] + params['tools'] if 'tools' in params else params['messages']
         history['context'] = json.dumps(context, ensure_ascii=False)
-        history['prompt'] = params['messages'][-1]['content']
+
+        if isinstance(params['messages'][-1]['content'], list):
+            prompt = [item['text'] for item in params['messages'][-1]['content'] if item['type'] == 'text']
+            prompt = '\n'.join(prompt)
+        else:
+            prompt = params['messages'][-1]['content']
+        history['prompt'] = prompt
         history['provider_name'] = self.provider_english_name
         history['model_name'] = self.model_name
         history['model_id'] = self.model_id
+        history['api_key_id'] = params['api_key_id']
+        del params['api_key_id']
+
         current_timestamp = get_current_timestamp()
         history['create_time'] = current_timestamp[0:-4]
         history['create_day'] = current_timestamp[0:10]
@@ -141,6 +150,7 @@ class LLMService(object):
 
                 async for line in response.aiter_lines():
                     chunk = line.strip()
+                    # logger.info(f"chunk: {chunk}")
                     if not chunk:
                         continue  # 跳过空行
                     chunk = chunk[6:]
