@@ -109,7 +109,7 @@ class LLMService(object):
 
         # httpx异步请求
         params['model'] = self.model_id
-        async with httpx.AsyncClient(timeout=600, proxies=settings.PROXIES) as client:
+        async with httpx.AsyncClient(timeout=600, proxy=settings.PROXIES) as client:
             response = await client.post(self.chat_url, json=params, headers=self.headers, timeout=600)
             if response.status_code != 200:
                 # 先读取响应内容
