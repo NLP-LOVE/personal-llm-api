@@ -13,9 +13,10 @@ async def init_db():
     db_client = MysqlClient(settings.MYSQL_HOST, settings.MYSQL_PORT, settings.MYSQL_USER, settings.MYSQL_PASSWORD, settings.MYSQL_DATABASE)
 
     # 先查询是否已经初始化过
-    sql = 'SELECT 1 FROM information_schema.tables WHERE table_name = "llm_provider"'
-    result = await db_client.select(sql)
-    if not result:
+    sql = 'SHOW TABLES'
+    tables = await db_client.select(sql)
+    tables = [list(table.values())[0] for table in tables]
+    if 'llm_provider' not in tables:
         logger.info('数据库未初始化，开始初始化...')
 
         # 读取sql文件

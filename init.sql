@@ -10,10 +10,10 @@ create table if not exists llm_provider
     update_time           DATETIME null
 ) comment 'LLM提供商表';
 
-INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786254914769649664, '深度求索', 'DeepSeek', 'test', 'https://api.deepseek.com', '2025-12-09 23:36:19', '2025-12-10 22:06:27');
-INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786594449739218944, '火山云', 'ByteDance', 'test', 'https://ark.cn-beijing.volces.com/api/v3', '2025-12-10 22:05:31', '2025-12-10 22:05:31');
-INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608631641538560, '阿里云', 'ALiYun', 'test', 'https://dashscope.aliyuncs.com/compatible-mode/v1', '2025-12-10 23:01:52', '2025-12-10 23:01:52');
-INSERT INTO personal_llm.llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608813334593536, 'OpenRouter', 'OpenRouter', 'test', 'https://openrouter.ai/api/v1', '2025-12-10 23:02:35', '2025-12-10 23:02:35');
+INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786254914769649665, '深度求索', 'DeepSeek', 'test', 'https://api.deepseek.com', '2025-12-09 23:36:19', '2025-12-10 22:06:27');
+INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786594449739218945, '火山云', 'ByteDance', 'test', 'https://ark.cn-beijing.volces.com/api/v3', '2025-12-10 22:05:31', '2025-12-10 22:05:31');
+INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608631641538561, '阿里云', 'ALiYun', 'test', 'https://dashscope.aliyuncs.com/compatible-mode/v1', '2025-12-10 23:01:52', '2025-12-10 23:01:52');
+INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608813334593537, 'OpenRouter', 'OpenRouter', 'test', 'https://openrouter.ai/api/v1', '2025-12-10 23:02:35', '2025-12-10 23:02:35');
 
 create table if not exists llm_model
 (
@@ -35,7 +35,7 @@ create index llm_model_provider_english_name_index
 create index llm_model_status_index
     on llm_model (status);
 
-INSERT INTO personal_llm.llm_model (id, provider_english_name, model_name, model_id, input_unit_price, output_unit_price, status, create_time, update_time) VALUES (786255595048009728, 'DeepSeek', 'deepseek-v3.2', 'deepseek-reasoner', 0.002, 0.003, 1, '2025-12-09 23:39:01', '2025-12-09 23:39:01');
+INSERT INTO llm_model (id, provider_english_name, model_name, model_id, input_unit_price, output_unit_price, status, create_time, update_time) VALUES (786255595048009728, 'DeepSeek', 'deepseek-v3.2', 'deepseek-reasoner', 0.002, 0.003, 1, '2025-12-09 23:39:01', '2025-12-09 23:39:01');
 
 
 
@@ -110,7 +110,7 @@ create index llm_api_keys_is_use_index
 create index llm_api_keys_is_delete_index
     on llm_api_keys (is_delete);
 
-INSERT INTO personal_llm.llm_api_keys (api_key, remark, is_use, is_delete, create_time, update_time) VALUES ('sk-6krzNJoef72vmQkzCAf97BFiMwevu2cQ', null, 1, 0, '2025-12-10 22:08:40', '2025-12-10 22:08:40');
+INSERT INTO llm_api_keys (api_key, remark, is_use, is_delete, create_time, update_time) VALUES ('sk-6krzNJoef72vmQkzCAf97BFiMwevu2cQ', null, 1, 0, '2025-12-10 22:08:40', '2025-12-10 22:08:40');
 
 
 
@@ -129,5 +129,5 @@ create index llm_user_username_index
 create index llm_user_password_index
     on llm_user (password);
 
-INSERT INTO personal_llm.llm_user (id, username, password, is_first_login) VALUES (1, 'stark', '12345678', 1);
+INSERT INTO llm_user (id, username, password, is_first_login) VALUES (1, 'stark', '12345678', 1);
 
