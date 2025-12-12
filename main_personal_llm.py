@@ -132,12 +132,14 @@ async def chat_stream(model, params):
 
     except Exception as e:
         logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 # 校验api key是否存在
 async def check_api_key(api_key: str):
     """校验api key是否存在"""
+    if not api_key:
+        raise HTTPException(status_code=401, detail='api key error!')
+
     api_key = api_key.replace('Bearer ', '')
     if not api_key or not api_key.startswith('sk-'):
         raise HTTPException(status_code=401, detail='api key error!')
