@@ -14,7 +14,7 @@ class OpenRouterLLMService(LLMService):
         if params['model'] in ['openai/gpt-5.2', 'openai/gpt-5.2-chat', 'openai/gpt-5.2-pro']:
             if params.get('reasoning_effort', ''):
                 if params['reasoning_effort'] not in ['none', 'low', 'medium', 'high', 'xhigh']:
-                        params['reasoning_effort'] = 'none'
+                        params['reasoning_effort'] = 'medium'
 
 
     async def get_usage(self, response, params, answer):
