@@ -13,7 +13,7 @@ router = APIRouter(prefix="/backend/chat", tags=["chat"])
 async def chat_history(request: Request, params: PaginationParams = Depends(get_page_params)):
     # 分页查询
 
-    sql = f"""SELECT * FROM llm_chat_history where ORDER BY id DESC LIMIT {(params.page - 1) * params.perPage},{params.perPage}"""
+    sql = f"""SELECT * FROM llm_chat_history ORDER BY id DESC LIMIT {(params.page - 1) * params.perPage},{params.perPage}"""
 
     data_list = await db_client.select(sql)
 
