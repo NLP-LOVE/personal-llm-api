@@ -4,3 +4,4 @@ __pycache__
 app_config.yaml
 note.md
 logs
+static/images/chat/

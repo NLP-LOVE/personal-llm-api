@@ -1,6 +1,8 @@
 import datetime
 import time
 import threading
+import os
+import base64
 import hashlib
 from functools import wraps
 
@@ -8,6 +10,7 @@ import pytz
 from pydantic import BaseModel, validator
 from fastapi import Request
 from fastapi.exceptions import HTTPException
+from config import settings
 
 
 
@@ -160,3 +163,22 @@ class PaginationParams(BaseModel):
 
 def get_page_params(page: int, perPage: int):
     return PaginationParams(page=page, perPage=perPage)
+
+# base64图片保存
+def save_base64_image(base64_str: str):
+    image_data = base64.b64decode(base64_str)
+
+    current = get_current_timestamp()[0:-4]
+    year = current[0:4]
+    month = current[5:7]
+    day = current[8:10]
+    image_path = os.path.join(settings.PROJECT_PATH, 'static/images/chat', year, month, day)
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
+
+    file_name = f'{snowflake.next_id()}.png'
+    with open(os.path.join(image_path, file_name), 'wb') as f:
+        f.write(image_data)
+    file_path = f'/static/images/chat/{year}/{month}/{day}/{file_name}'
+
+    return file_path

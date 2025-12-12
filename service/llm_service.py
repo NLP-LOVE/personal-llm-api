@@ -1,9 +1,10 @@
 import json
 import time
+import copy
 
 import httpx
 from fastapi.exceptions import HTTPException
-from utils.util import snowflake, get_current_timestamp
+from utils.util import snowflake, get_current_timestamp, save_base64_image
 from utils.mysql_client import db_client
 from utils.logger import Logger
 from config import settings
@@ -40,7 +41,7 @@ class LLMService(object):
     async def create_history(self, params):
         history = {}
         history['id'] = snowflake.next_id()
-        context = params['messages'] + params['tools'] if 'tools' in params else params['messages']
+        context = await self.construct_db_context(params)
         history['context'] = json.dumps(context, ensure_ascii=False)
 
         if isinstance(params['messages'][-1]['content'], list):
@@ -192,6 +193,12 @@ class LLMService(object):
                         if chunk['choices'][0]['delta'].get('reasoning', ''):
                             reasoning_content.append(chunk['choices'][0]['delta']['reasoning'])
 
+                        # 输出图片base64保存
+                        for image in chunk['choices'][0]['delta'].get('images', []):
+                            if image['type'] == 'image_url':
+                                img_path = save_base64_image(image['image_url']['url'].split(',')[1])
+                                content.append(f'\n\n![image]({img_path})')
+
                         if chunk['choices'][0].get('finish_reason', '') == 'stop':
                             chunk['choices'][0]['finish_reason'] = None
 
@@ -201,9 +208,7 @@ class LLMService(object):
                     yield chunk
 
 
-
-        if not usage:
-            usage = await self.get_usage({'usage': usage}, params, f"{''.join(reasoning_content)}\n{''.join(content)}")
+        usage = await self.get_usage({'usage': usage}, params, f"{''.join(reasoning_content)}\n{''.join(content)}")
 
         # finishe
         templace = {"choices": [{"delta": {"content": "", "role": "assistant"}, "index": 0, "finish_reason": 'stop'}],
@@ -321,3 +326,19 @@ class LLMService(object):
     # 根据不同的供应商参数进行个性化处理
     async def handle_params(self, params):
         pass
+
+    # 构建数据库当中的context字段
+    async def construct_db_context(self, params):
+        messages = copy.deepcopy(params['messages'])
+
+        for item in messages:
+            if isinstance(item['content'], list):
+                for content_item in item['content']:
+                    if 'image_url' in content_item:
+                        if content_item['image_url']['url'].startswith('data:image'):
+                            # 保存图片
+                            image_url = content_item['image_url']['url']
+                            content_item['image_url']['url'] = save_base64_image(image_url.split(',')[1])
+
+        context = messages + params['tools'] if 'tools' in params else messages
+        return context

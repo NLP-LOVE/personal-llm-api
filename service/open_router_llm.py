@@ -20,7 +20,15 @@ class OpenRouterLLMService(LLMService):
 
     async def get_usage(self, response, params, answer):
         if response['usage']:
-            return {'completion_tokens': response['usage']['completion_tokens'], 'prompt_tokens': response['usage']['prompt_tokens'], 'total_tokens': response['usage']['total_tokens']}
+            completion_tokens = response['usage']['completion_tokens']
+
+            if self.model_id == 'google/gemini-3-pro-image-preview':
+                rate = 120 / 12
+                if 'completion_tokens_details' in response['usage'] and 'image_tokens' in response['usage']['completion_tokens_details']:
+                    image_tokens = response['usage']['completion_tokens_details']['image_tokens']
+                    completion_tokens += image_tokens * rate
+
+            return {'completion_tokens': completion_tokens, 'prompt_tokens': response['usage']['prompt_tokens'], 'total_tokens': response['usage']['prompt_tokens'] + completion_tokens}
         else:
             payload = {
                 "id": params['id']
