@@ -8,6 +8,15 @@ from service.llm_service import LLMService
 # https://openrouter.ai/docs/usage/chat-completions
 class OpenRouterLLMService(LLMService):
 
+    # # 根据不同的供应商参数进行个性化处理
+    async def handle_params(self, params):
+
+        if params['model'] in ['openai/gpt-5.2', 'openai/gpt-5.2-chat', 'openai/gpt-5.2-pro']:
+            if params.get('reasoning_effort', ''):
+                if params['reasoning_effort'] not in ['none', 'low', 'medium', 'high', 'xhigh']:
+                        params['reasoning_effort'] = 'none'
+
+
     async def get_usage(self, response, params, answer):
         if response['usage']:
             return {'completion_tokens': response['usage']['completion_tokens'], 'prompt_tokens': response['usage']['prompt_tokens'], 'total_tokens': response['usage']['total_tokens']}

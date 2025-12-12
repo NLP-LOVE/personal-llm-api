@@ -144,12 +144,14 @@ class LLMService(object):
         logger = Logger(self.model_name, id)
         logger.info(f"chat start")
 
-
         # httpx异步请求
         usage = None
         content = []
         reasoning_content = []
         params['model'] = self.model_id
+        # 根据不同的供应商参数进行个性化处理
+        await self.handle_params(params)
+
         async with httpx.AsyncClient(timeout=600, proxy=settings.PROXIES) as client:
             async with client.stream("POST", self.chat_url, json=params, headers=self.stream_headers) as response:
 
@@ -315,3 +317,7 @@ class LLMService(object):
             return {'completion_tokens': response['usage']['completion_tokens'], 'prompt_tokens': response['usage']['prompt_tokens'], 'total_tokens': response['usage']['total_tokens']}
         else:
             return {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+
+    # 根据不同的供应商参数进行个性化处理
+    async def handle_params(self, params):
+        pass

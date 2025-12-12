@@ -60,10 +60,10 @@ async def init_models():
         if model['provider_english_name'] == 'ByteDance':
             llm_service = ByteLLMService(**params)
 
-        elif model['provider_english_name'] == 'qwen':
+        elif model['provider_english_name'] == 'ALiYun':
             llm_service = QwenLLMService(**params)
 
-        elif model['provider_english_name'] == 'open_router':
+        elif model['provider_english_name'] == 'OpenRouter':
             llm_service = OpenRouterLLMService(**params)
 
         else:
