@@ -11,11 +11,11 @@ class OpenRouterLLMService(LLMService):
     # # 根据不同的供应商参数进行个性化处理
     async def handle_params(self, params):
 
-        if params['model'] in ['openai/gpt-5.2', 'openai/gpt-5.2-chat', 'openai/gpt-5.2-pro']:
-            if params.get('reasoning_effort', ''):
-                if params['reasoning_effort'] not in ['none', 'low', 'medium', 'high', 'xhigh']:
-                    params['reasoning'] = {'enabled': True}
-                    del params['reasoning_effort']
+        # if params['model'] in ['openai/gpt-5.2', 'openai/gpt-5.2-chat', 'openai/gpt-5.2-pro']:
+        if params.get('reasoning_effort', ''):
+            if params['reasoning_effort'] not in ['none', 'low', 'medium', 'high', 'xhigh']:
+                params['reasoning'] = {'enabled': True}
+                del params['reasoning_effort']
 
 
     async def get_usage(self, response, params, answer):
