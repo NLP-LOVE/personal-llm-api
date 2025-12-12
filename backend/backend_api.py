@@ -1,10 +1,9 @@
 import os
 
 from fastapi import APIRouter, Request
-from pydantic import BaseModel, Field, validator, ValidationInfo, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from utils.mysql_client import db_client
-from config import settings
 
 backend_router = APIRouter(prefix="/backend", tags=["backend"])
 
@@ -14,14 +13,14 @@ class UserBase(BaseModel):
     username: str = Field()
     password: str = Field(description="密码")
 
-    @validator('username')
+    @field_validator('username')
     def validate_username(cls, v):
         """用户名格式验证"""
         if not v:
             raise ValueError('用户名不能为空')
         return v
 
-    @validator('password')
+    @field_validator('password')
     def validate_password(cls, v):
         """密码格式验证"""
         if not v:
@@ -60,7 +59,6 @@ class PasswordBase(BaseModel):
     password_again: str = Field(description="确认密码")
 
     @field_validator('password_again')
-    @classmethod
     def validate_password_again(cls, v, info: ValidationInfo):
         """确认密码格式验证"""
         if not v:
@@ -73,7 +71,7 @@ class PasswordBase(BaseModel):
             raise ValueError('两次输入密码不一致')
         return v
 
-    @validator('password')
+    @field_validator('password')
     def validate_password(cls, v):
         """密码格式验证"""
         if not v:

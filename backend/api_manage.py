@@ -3,7 +3,7 @@ import string
 import secrets
 
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 from utils.util import snowflake, get_current_timestamp, require_auth, PaginationParams, get_page_params
 from utils.mysql_client import db_client
@@ -16,30 +16,6 @@ class ProviderBase(BaseModel):
     provider_english_name: str
     api_key: str
     base_url: str
-
-    @validator('provider_name')
-    def validate_provider_name(cls, value):
-        if not value:
-            raise ValueError('供应商名称不能为空')
-        return value
-
-    @validator('provider_english_name')
-    def validate_provider_english_name(cls, value):
-        if not value:
-            raise ValueError('供应商英文名称不能为空')
-        return value
-
-    @validator('api_key')
-    def validate_api_key(cls, value):
-        if not value:
-            raise ValueError('api key不能为空')
-        return value
-
-    @validator('base_url')
-    def validate_base_url(cls, value):
-        if not value:
-            raise ValueError('base url不能为空')
-        return value
 
 # 创建供应商
 @router.post("/provider/create")
@@ -147,26 +123,7 @@ class ModelBase(BaseModel):
     input_unit_price: Union[str, int, float]
     output_unit_price: Union[str, int, float]
 
-
-    @validator('provider_english_name')
-    def validate_provider_english_name(cls, value):
-        if not value:
-            raise ValueError('供应商英文名称不能为空')
-        return value
-
-    @validator('model_name')
-    def validate_model_name(cls, value):
-        if not value:
-            raise ValueError('模型名称不能为空')
-        return value
-
-    @validator('model_id')
-    def validate_model_id(cls, value):
-        if not value:
-            raise ValueError('模型id不能为空')
-        return value
-
-    @validator('input_unit_price')
+    @field_validator('input_unit_price')
     def validate_input_unit_price(cls, value):
         if isinstance(value, int) or isinstance(value, float):
             value = str(value)
@@ -179,7 +136,7 @@ class ModelBase(BaseModel):
             raise ValueError('输入单价必须为数字')
         return value
 
-    @validator('output_unit_price')
+    @field_validator('output_unit_price')
     def validate_output_unit_price(cls, value):
         if isinstance(value, int) or isinstance(value, float):
             value = str(value)
@@ -370,7 +327,8 @@ async def key_update_remark(request: Request):
     if not request_data.get('id', None):
         return {"status": 1, "msg": "错误！", "data": {}}
     if not request_data.get('remark', None):
-        return {"status": 1, "msg": "错误！", "data": {}}
+        request_data['remark'] = ''
+
 
     current_timestamp = get_current_timestamp()[:-4]
 

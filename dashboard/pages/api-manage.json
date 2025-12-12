@@ -16,22 +16,26 @@
                         {
                             "type": "input-text",
                             "name": "provider_name",
-                            "label": "供应商名称"
+                            "label": "供应商名称",
+                            "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "provider_english_name",
-                            "label": "供应商英文名称"
+                            "label": "供应商英文名称",
+                            "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "api_key",
-                            "label": "api-key"
+                            "label": "api-key",
+                            "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "base_url",
-                            "label": "base-url"
+                            "label": "base-url",
+                            "required": true
                         }
                     ]
                 }
@@ -88,22 +92,26 @@
                                         {
                                             "type": "input-text",
                                             "name": "provider_name",
-                                            "label": "供应商名称"
+                                            "label": "供应商名称",
+                                            "required": true
                                         },
                                         {
                                             "type": "input-text",
                                             "name": "provider_english_name",
-                                            "label": "供应商英文名称"
+                                            "label": "供应商英文名称",
+                                            "required": true
                                         },
                                         {
                                             "type": "input-text",
                                             "name": "api_key",
-                                            "label": "api-key"
+                                            "label": "api-key",
+                                            "required": true
                                         },
                                         {
                                             "type": "input-text",
                                             "name": "base_url",
-                                            "label": "base-url"
+                                            "label": "base-url",
+                                            "required": true
                                         }
                                     ]
                                 }
@@ -137,27 +145,32 @@
                           "label": "供应商英文名称",
                           "type": "select",
                           "name": "provider_english_name",
+                          "required": true,
                           "source": "/backend/api-manage/provider/select"
                         },
                         {
                             "type": "input-text",
                             "name": "model_name",
-                            "label": "模型名称"
+                            "label": "模型名称",
+                            "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "model_id",
-                            "label": "模型ID"
+                            "label": "模型ID",
+                            "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "input_unit_price",
-                            "label": "模型输入单价/千token"
+                            "label": "模型输入单价/千token",
+                            "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "output_unit_price",
-                            "label": "模型输出单价/千token"
+                            "label": "模型输出单价/千token",
+                            "required": true
                         }
                     ]
                 }

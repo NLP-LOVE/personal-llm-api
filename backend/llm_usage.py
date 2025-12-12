@@ -1,8 +1,8 @@
 import datetime
-from typing import Literal, Optional
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, field_validator
 
 from utils.util import get_before_timestamp, get_before_month, require_auth, get_before_day, get_current_timestamp
 from utils.mysql_client import db_client
@@ -15,7 +15,7 @@ class ChartBase(BaseModel):
     before_num: Optional[str]  # 可选字段
     unit_type: Optional[str]  # 可选字段
 
-    @validator('unit_type')
+    @field_validator('unit_type')
     def validate_unit_type(cls, v):
         """时间单位格式验证"""
         if not v:
@@ -24,7 +24,7 @@ class ChartBase(BaseModel):
             raise ValueError('时间单位必须是day或month或year')
         return v
 
-    @validator('before_num')
+    @field_validator('before_num')
     def validate_before_num(cls, v):
         """时间范围格式验证"""
         if not v:

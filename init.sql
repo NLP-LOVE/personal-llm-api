@@ -14,6 +14,7 @@ INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, bas
 INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786594449739218945, '火山云', 'ByteDance', 'test', 'https://ark.cn-beijing.volces.com/api/v3', '2025-12-10 22:05:31', '2025-12-10 22:05:31');
 INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608631641538561, '阿里云', 'ALiYun', 'test', 'https://dashscope.aliyuncs.com/compatible-mode/v1', '2025-12-10 23:01:52', '2025-12-10 23:01:52');
 INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (786608813334593537, 'OpenRouter', 'OpenRouter', 'test', 'https://openrouter.ai/api/v1', '2025-12-10 23:02:35', '2025-12-10 23:02:35');
+INSERT INTO llm_provider (id, provider_name, provider_english_name, api_key, base_url, create_time, update_time) VALUES (787137527113842688, '硅基流动', 'SiliconCloud', 'test', 'https://api.siliconflow.cn', '2025-12-12 10:03:30', '2025-12-12 10:03:30');
 
 create table if not exists llm_model
 (

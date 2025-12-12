@@ -24,7 +24,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
-
+from pydantic_core import ValidationError
 
 from init import init_db, init_models, get_model
 from config import settings
@@ -84,6 +84,22 @@ app.include_router(chat_router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
+    """自定义验证错误处理器"""
+    errors = []
+    for error in exc.errors():
+        errors.append({
+            "field": ".".join(str(loc) for loc in error['loc']),
+            "message": str(error['ctx']['error']) if 'ctx' in error else '',
+            "type": error['type']
+        })
+
+    return JSONResponse(
+        status_code=200,
+        content={"status": 1, "msg": errors[0]['message']}
+    )
+
+@app.exception_handler(ValidationError)
+async def validation_exception_handler2(request, exc):
     """自定义验证错误处理器"""
     errors = []
     for error in exc.errors():
