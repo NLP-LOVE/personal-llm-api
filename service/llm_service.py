@@ -6,6 +6,7 @@ from fastapi.exceptions import HTTPException
 from utils.util import snowflake, get_current_timestamp
 from utils.mysql_client import db_client
 from utils.logger import Logger
+from config import settings
 
 # 供应商模型接口基类
 class LLMService(object):
@@ -108,7 +109,7 @@ class LLMService(object):
 
         # httpx异步请求
         params['model'] = self.model_id
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=600, proxies=settings.PROXIES) as client:
             response = await client.post(self.chat_url, json=params, headers=self.headers, timeout=600)
             if response.status_code != 200:
                 # 先读取响应内容
@@ -149,7 +150,7 @@ class LLMService(object):
         content = []
         reasoning_content = []
         params['model'] = self.model_id
-        async with httpx.AsyncClient(timeout=600) as client:
+        async with httpx.AsyncClient(timeout=600, proxy=settings.PROXIES) as client:
             async with client.stream("POST", self.chat_url, json=params, headers=self.stream_headers) as response:
 
                 if response.status_code != 200:
