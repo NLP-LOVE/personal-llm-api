@@ -97,4 +97,12 @@ async def backend_reset_password(request: Request, password: PasswordBase):
 
     return {"status": 0, "msg": "密码重置成功"}
 
+@backend_router.get('/logout')
+async def backend_logout(request: Request):
+
+    # 清除session
+    session = request.session
+    session.clear()
+    return {"status": 0, "msg": "退出登录成功"}
+
 

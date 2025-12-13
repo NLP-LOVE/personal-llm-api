@@ -6,7 +6,7 @@ from agents import Agent, function_tool
 # 1. 创建自定义客户端，指定你的模型服务终点和API Key
 custom_client = AsyncOpenAI(
     base_url="http://127.0.0.1:2321",
-    api_key="sk-TGWPCSRgNj4GFpVPhMxTh0NXMtFDurAH"  # 替换为你的API密钥
+    api_key="sk-6krzNJoef72vmQkzCAf97BFiMwevu2cQ"  # 替换为你的API密钥
 )
 
 # 2. 进行全局配置

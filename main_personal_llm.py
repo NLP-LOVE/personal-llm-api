@@ -118,7 +118,14 @@ async def validation_exception_handler2(request, exc):
 async def chat_stream(model, params):
 
     try:
-        if 'tools' in params and params['tools'] and params['tools'][0]['type'] == 'web_search':
+        # 判断是否使用response接口
+        is_use_response_interface = False
+        for item in params.get('tools', []):
+            if item['type'] == 'web_search':
+                is_use_response_interface = True
+                break
+
+        if is_use_response_interface:
             async for chunk in model.chat_stream_response(params):
                 ## sse返回数据
                 yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
@@ -166,6 +173,12 @@ def validate_chat_params(params: dict):
         raise HTTPException(status_code=400, detail='messages params error!')
     if 'stream' in params and params['stream'] == True and 'stream_options' not in params:
         params['stream_options'] = {'include_usage': True}
+
+    # 自定义web_search参数，并使用response接口，支持 火山云 供应商模型
+    # https://www.volcengine.com/docs/82379/1756990?lang=zh
+    if params.get('web_search', 'false').lower() == 'true':
+        params['tools'] = params.get('tools', []) + [{'type': 'web_search'}]
+        del params['web_search']
 
     return params
 

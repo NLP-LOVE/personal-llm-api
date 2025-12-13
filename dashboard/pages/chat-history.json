@@ -38,7 +38,7 @@
                 "label": "操作",
                 "buttons": [
                     {
-                        "label": "查看",
+                        "label": "查看对话",
                         "type": "button",
                         "actionType": "dialog",
                         "dialog": {

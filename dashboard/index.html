@@ -49,10 +49,39 @@
           brandName: 'LLM Manage',
           logo: '/static/images/logo.png',
           header: {
-            type: 'tpl',
-            inline: false,
-            className: 'w-full',
-            tpl: '<div class="flex justify-between"><div></div><div></div></div>'
+            type: 'page',
+            body: [
+                {
+                    "type": "flex",
+                    "justify": "flex-end",
+                    "items": [
+                        {
+                            "label": "退出登录",
+                            "type": "button",
+                            "icon": "fa fa-sign-out",
+                            "actionType": "dialog",
+                            "level": "danger",
+                            "dialog": {
+                              "title": "弹框",
+                              "body": "确定退出登录吗？",
+                              "onEvent": {
+                                  "confirm": {
+                                    "actions": [
+                                      {
+                                        "actionType": "ajax",
+                                        "api": "get:/backend/logout"
+                                      },
+                                      {
+                                        "actionType": "refresh"
+                                      }
+                                    ]
+                                  }
+                              }
+                            }
+                        },
+                    ],
+                }
+            ],
           },
           footer: '<div class="p-2 text-center bg-light" style="font-size: 14px !important;">powered by <a href="https://aisuda.github.io/amis-1.1.7/zh-CN/docs/index" target="_blank">amis-6.13.0</a></div>',
           asideBefore: '<div class="p-2 text-center"></div>',
