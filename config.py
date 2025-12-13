@@ -39,7 +39,14 @@ class Settings():
         self.MYSQL_PASSWORD = yaml_config['database']['mysql']['password']
         self.MYSQL_DATABASE = yaml_config['database']['mysql']['database']
         self.PROJECT_PATH = os.path.dirname(__file__)
-        self.PROXIES = get_system_proxies()
+
+        # 代理设置
+        if yaml_config['proxy']['type'] == 'system':
+            self.PROXIES = get_system_proxies()
+        elif yaml_config['proxy']['type'] == 'manual':
+            self.PROXIES = yaml_config['proxy']['url']
+        else:
+            self.PROXIES = None
 
         print()
 
