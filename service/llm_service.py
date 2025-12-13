@@ -347,5 +347,10 @@ class LLMService(object):
                             image_url = content_item['image_url']['url']
                             content_item['image_url']['url'] = save_base64_image(image_url.split(',')[1])
 
-        context = messages + params['tools'] if 'tools' in params else messages
+        tools = []
+        for tool in params.get('tools', []):
+            if tool['type'] != 'web_search':
+                tools.append(tool)
+
+        context = messages + tools if tools else messages
         return context
