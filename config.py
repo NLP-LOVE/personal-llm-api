@@ -33,11 +33,16 @@ class Settings():
         with open('app_config.yaml', 'r', encoding='utf-8') as file:
             yaml_config = yaml.safe_load(file)
 
-        self.MYSQL_HOST = yaml_config['database']['mysql']['host']
-        self.MYSQL_PORT = yaml_config['database']['mysql']['port']
-        self.MYSQL_USER = yaml_config['database']['mysql']['user']
-        self.MYSQL_PASSWORD = yaml_config['database']['mysql']['password']
-        self.MYSQL_DATABASE = yaml_config['database']['mysql']['database']
+        if yaml_config['database']['use_db'] == 'mysql':
+            self.MYSQL_HOST = yaml_config['database']['mysql']['host']
+            self.MYSQL_PORT = yaml_config['database']['mysql']['port']
+            self.MYSQL_USER = yaml_config['database']['mysql']['user']
+            self.MYSQL_PASSWORD = yaml_config['database']['mysql']['password']
+            self.MYSQL_DATABASE = yaml_config['database']['mysql']['database']
+        else:
+            self.SQLITE_PATH = yaml_config['database']['sqlite']['db_path']
+
+        self.USE_DB = yaml_config['database']['use_db']
         self.PROJECT_PATH = os.path.dirname(__file__)
 
         # 代理设置

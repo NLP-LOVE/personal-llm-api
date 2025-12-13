@@ -1,6 +1,14 @@
 
 # 数据库配置
 database:
+  # 数据库类型，可选 sqlite \ mysql
+  # - sqlite: 使用 SQLite 数据库，需要指定 db_path
+  # - mysql: 使用 MySQL 数据库，需要指定 host, port, user, password, database
+  use_db: sqlite
+
+  sqlite:
+    db_path: ./db/llm.db
+
   mysql:
     host: 127.0.0.1
     port: 3306

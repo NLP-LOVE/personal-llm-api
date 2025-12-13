@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, field_validator
 
 from utils.util import snowflake, get_current_timestamp, require_auth, PaginationParams, get_page_params
-from utils.mysql_client import db_client
+from utils.db_client import db_client
 from init import init_models
 
 router = APIRouter(prefix="/backend/api-manage", tags=["api-manage"])
@@ -16,6 +16,12 @@ class ProviderBase(BaseModel):
     provider_english_name: str
     api_key: str
     base_url: str
+
+    @field_validator('base_url')
+    def validate_base_url(cls, value):
+        if not value.startswith('http') and not value.startswith('https'):
+            raise ValueError('base-url 必须是网址')
+        return value
 
 # 创建供应商
 @router.post("/provider/create")
@@ -84,8 +90,10 @@ async def provider_delete(request: Request):
 
     # 更新is_delete
     current_timestamp = get_current_timestamp()[:-4]
-    sql = f"update llm_provider set is_delete=1, update_time=\"{current_timestamp}\" where id={request_data['id']};\n"
-    sql += f"update llm_model set is_delete=1, update_time=\"{current_timestamp}\" where provider_english_name=(select provider_english_name from llm_provider where id={request_data['id']});"
+    sql = f"update llm_provider set is_delete=1, update_time=\"{current_timestamp}\" where id={request_data['id']};"
+    await db_client.execute(sql)
+
+    sql = f"update llm_model set is_delete=1, update_time=\"{current_timestamp}\" where provider_english_name=(select provider_english_name from llm_provider where id={request_data['id']});"
     await db_client.execute(sql)
 
     await init_models()
@@ -101,7 +109,7 @@ async def provider_update(request: Request, params: ProviderBase):
     if not request_data.get('id', None):
         return {"status": 1, "msg": "错误！", "data": {}}
     
-    current_timestamp = get_current_timestamp()
+    current_timestamp = get_current_timestamp()[:-4]
 
     sql = 'update llm_provider set '+ \
         f'provider_name="{params.provider_name}",'+ \

@@ -1,33 +1,76 @@
+import os.path
 
 from loguru import logger
+import aiosqlite
 
 from service.byte_llm import ByteLLMService
 from service.llm_service import LLMService
 from service.open_router_llm import OpenRouterLLMService
 from service.qwen_llm import QwenLLMService
-from utils.mysql_client import MysqlClient
 from config import settings
 
-# 初始化数据库
-async def init_db():
+
+
+async def init_mysql():
+    from utils.mysql_client import MysqlClient
     db_client = MysqlClient(settings.MYSQL_HOST, settings.MYSQL_PORT, settings.MYSQL_USER, settings.MYSQL_PASSWORD, settings.MYSQL_DATABASE)
 
-    # 先查询是否已经初始化过
     sql = 'SHOW TABLES'
+    init_file = os.path.join(settings.PROJECT_PATH, 'db/init.sql')
+
+    # 先查询是否已经初始化过
     tables = await db_client.select(sql)
     tables = [list(table.values())[0] for table in tables]
     if 'llm_provider' not in tables:
-        logger.info('数据库未初始化，开始初始化...')
+        logger.info('mysql 数据库未初始化，开始初始化...')
 
         # 读取sql文件
-        with open('init.sql', 'r', encoding='utf-8') as f:
+        with open(init_file, 'r', encoding='utf-8') as f:
             sql = f.read()
         await db_client.execute(sql)
 
-        logger.info('数据库初始化完成')
+        logger.info('mysql 数据库初始化完成')
 
     db_client.pool.close()
     await db_client.pool.wait_closed()
+
+
+async def init_sqlite():
+    init_file = os.path.join(settings.PROJECT_PATH, 'db/init_sqlite.sql')
+
+    async with aiosqlite.connect(settings.SQLITE_PATH) as db:
+        # 先查询是否已经初始化过
+        sql = "SELECT name FROM sqlite_master WHERE type='table'"
+        cursor = await db.execute(sql)
+        result = await cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        tables = [dict(zip(columns, row)) for row in result]
+
+        tables = [list(table.values())[0] for table in tables]
+        if 'llm_provider' not in tables:
+            logger.info('sqlite 数据库未初始化，开始初始化...')
+
+            # 读取sql文件
+            with open(init_file, 'r', encoding='utf-8') as f:
+                sql = f.read()
+
+            sql_list = sql.split(';')
+            for sql in sql_list:
+                sql = sql.strip()
+                if sql:
+                    await db.execute(sql)
+
+            await db.commit()
+            logger.info('sqlite 数据库初始化完成')
+
+
+# 初始化数据库
+async def init_db():
+
+    if settings.USE_DB == 'mysql':
+        await init_mysql()
+    else:
+        await init_sqlite()
 
 
 MODELS_OBJ = {'models_dict': {}, 'models_dict_num': {}}
@@ -42,7 +85,13 @@ async def init_models():
           'left join llm_provider on llm_provider.provider_english_name=llm_model.provider_english_name ' + \
           'where status=1 and llm_model.is_delete=0 and llm_provider.provider_name is not null'
 
-    db_client = MysqlClient(settings.MYSQL_HOST, settings.MYSQL_PORT, settings.MYSQL_USER, settings.MYSQL_PASSWORD, settings.MYSQL_DATABASE)
+    if settings.USE_DB == 'mysql':
+        from utils.mysql_client import MysqlClient
+        db_client = MysqlClient(settings.MYSQL_HOST, settings.MYSQL_PORT, settings.MYSQL_USER, settings.MYSQL_PASSWORD, settings.MYSQL_DATABASE)
+    else:
+        from utils.sqlite_client import SqliteClient
+        db_client = SqliteClient(settings.SQLITE_PATH)
+
     models_list = await db_client.select(sql)
 
     # 2. 创建模型字典
@@ -78,8 +127,9 @@ async def init_models():
     MODELS_OBJ['models_dict'] = models_dict
     MODELS_OBJ['models_dict_num'] = models_dict_num
 
-    db_client.pool.close()
-    await db_client.pool.wait_closed()
+    if settings.USE_DB == 'mysql':
+        db_client.pool.close()
+        await db_client.pool.wait_closed()
 
     logger.info(f'模型接口初始化完成，共初始化{len(models_dict)}个模型接口')
 

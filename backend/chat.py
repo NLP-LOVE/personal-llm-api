@@ -4,7 +4,7 @@ import json
 from fastapi import APIRouter, Depends, Request
 
 from utils.util import require_auth, PaginationParams, get_page_params
-from utils.mysql_client import db_client
+from utils.db_client import db_client
 
 router = APIRouter(prefix="/backend/chat", tags=["chat"])
 

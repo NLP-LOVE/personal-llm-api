@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, field_validator
 
 from utils.util import get_before_timestamp, get_before_month, require_auth, get_before_day, get_current_timestamp
-from utils.mysql_client import db_client
+from utils.db_client import db_client
 
 router = APIRouter(prefix="/backend/llm-usage", tags=["backend-llm-usage"])
 

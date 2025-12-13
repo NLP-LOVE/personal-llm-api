@@ -3,7 +3,7 @@ import os
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
-from utils.mysql_client import db_client
+from utils.db_client import db_client
 
 backend_router = APIRouter(prefix="/backend", tags=["backend"])
 

@@ -5,7 +5,7 @@ import copy
 import httpx
 from fastapi.exceptions import HTTPException
 from utils.util import snowflake, get_current_timestamp, save_base64_image
-from utils.mysql_client import db_client
+from utils.db_client import db_client
 from utils.logger import Logger
 from config import settings
 

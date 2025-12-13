@@ -28,7 +28,7 @@ from pydantic_core import ValidationError
 
 from init import init_db, init_models, get_model
 from config import settings
-from utils.mysql_client import db_client
+from utils.db_client import db_client
 from backend.backend_api import backend_router
 from backend.llm_usage import router as llm_usage_router
 from backend.api_manage import router as api_router
