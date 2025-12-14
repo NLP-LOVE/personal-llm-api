@@ -7,7 +7,6 @@ from pydantic import BaseModel, field_validator
 
 from utils.util import snowflake, get_current_timestamp, require_auth, PaginationParams, get_page_params
 from utils.db_client import db_client
-from init import init_models
 
 router = APIRouter(prefix="/backend/api-manage", tags=["api-manage"])
 
@@ -45,7 +44,6 @@ async def provider_create(request: Request, params: ProviderBase):
     data['update_time'] = current_timestamp[:-4]
     
     await db_client.insert('llm_provider', [data])
-    await init_models()
     return {"status": 0, "msg": "创建成功", "data": {}}
 
 # 获取供应商列表
@@ -96,7 +94,6 @@ async def provider_delete(request: Request):
     sql = f"update llm_model set is_delete=1, update_time=\"{current_timestamp}\" where provider_english_name=(select provider_english_name from llm_provider where id={request_data['id']});"
     await db_client.execute(sql)
 
-    await init_models()
     return {"status": 0, "msg": "删除成功", "data": {}}
 
 # 更新供应商
@@ -119,7 +116,6 @@ async def provider_update(request: Request, params: ProviderBase):
         f'update_time="{current_timestamp}"'+ \
         f' where id={request_data["id"]}'
     await db_client.execute(sql)
-    await init_models()
     return {"status": 0, "msg": "更新成功", "data": {}}
 
 
@@ -174,7 +170,6 @@ async def model_create(request: Request, params: ModelBase):
     data['update_time'] = current_timestamp[:-4]
     
     await db_client.insert('llm_model', data)
-    await init_models()
     return {"status": 0, "msg": "创建成功", "data": {}}
 
 
@@ -219,8 +214,7 @@ async def model_update(request: Request, params: ModelBase):
         f'update_time="{current_timestamp}"'+ \
         f' where id={request_data["id"]}'
     await db_client.execute(sql)
-    
-    await init_models()
+
     return {"status": 0, "msg": "修改成功", "data": {}}
 
 
@@ -245,7 +239,6 @@ async def model_update_status(request: Request):
     sql = f"update llm_model set status={status}, update_time=\"{current_timestamp}\" where id={request_data['id']}"
     await db_client.execute(sql)
 
-    await init_models()
     return {"status": 0, "msg": "修改成功", "data": {}}
 
 @router.get("/model/delete")
@@ -261,7 +254,6 @@ async def model_delete(request: Request):
     sql = f"update llm_model set is_delete=1, update_time=\"{current_timestamp}\" where id={request_data['id']}"
     await db_client.execute(sql)
 
-    await init_models()
     return {"status": 0, "msg": "删除成功", "data": {}}
 
 
