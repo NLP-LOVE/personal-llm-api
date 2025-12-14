@@ -2,5 +2,6 @@
 __pycache__
 .idea
 app_config.yaml
+db/llm.db
 logs
 static/images/chat/

@@ -1,1 +1,0 @@
-C:\app\conda\envs\llmapi\python.exe -m pip install uvicorn -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple

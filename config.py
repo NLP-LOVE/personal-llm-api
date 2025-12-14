@@ -1,6 +1,16 @@
 import yaml
 import os
 import sys
+import requests
+
+
+def install_statistics(project_path):
+    try:
+        with open(os.path.join(project_path, 'db', 'version')) as f:
+            version = f.read().strip()
+        res= requests.post('http://statistics.dx3906.info/install-statistics', json={'version': version}, timeout=5)
+    except:
+        pass
 
 
 def get_system_proxies():
