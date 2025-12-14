@@ -1,4 +1,4 @@
-# Personal LLM API
+# 🎆Personal LLM API
 
 Personal LLM API 是一款轻量级的 LLM 模型接口服务，与 [one-api](https://github.com/songquanpeng/one-api) 相比，本项目更加简洁易用，专为个人用户打造统一的 LLM 接口管理方案。基于 Python 开发，采用 FastAPI 框架实现高性能接口服务，后台管理界面使用 amis 低代码开发，无需复杂的前端技术即可快速构建管理控制台。
 
