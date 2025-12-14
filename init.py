@@ -9,8 +9,22 @@ from service.open_router_llm import OpenRouterLLMService
 from service.qwen_llm import QwenLLMService
 from config import settings
 
+# 读取初始化sql文件
+def get_init_sql():
+    with open(os.path.join(settings.PROJECT_PATH, 'db', 'version')) as f:
+        version = 'V' + f.read().strip()
+
+    if settings.USE_DB == 'mysql':
+        with open(os.path.join(settings.PROJECT_PATH, 'db', 'init_mysql.sql'), 'r', encoding='utf-8') as f:
+            sql = f.read().split(version)[1]
+    else:
+        with open(os.path.join(settings.PROJECT_PATH, 'db', 'init_sqlite.sql'), 'r', encoding='utf-8') as f:
+            sql = f.read().split(version)[1]
+
+    return sql
 
 
+# 初始化mysql数据库
 async def init_mysql():
     from utils.mysql_client import MysqlClient
     db_client = MysqlClient(settings.MYSQL_HOST, settings.MYSQL_PORT, settings.MYSQL_USER, settings.MYSQL_PASSWORD, settings.MYSQL_DATABASE)
@@ -34,9 +48,9 @@ async def init_mysql():
     db_client.pool.close()
     await db_client.pool.wait_closed()
 
-
+# 初始化sqlite数据库
 async def init_sqlite():
-    init_file = os.path.join(settings.PROJECT_PATH, 'db/init_sqlite.sql')
+    init_sql = get_init_sql()
 
     async with aiosqlite.connect(settings.SQLITE_PATH) as db:
         # 先查询是否已经初始化过
@@ -50,11 +64,7 @@ async def init_sqlite():
         if 'llm_provider' not in tables:
             logger.info('sqlite 数据库未初始化，开始初始化...')
 
-            # 读取sql文件
-            with open(init_file, 'r', encoding='utf-8') as f:
-                sql = f.read()
-
-            sql_list = sql.split(';')
+            sql_list = init_sql.split(';')
             for sql in sql_list:
                 sql = sql.strip()
                 if sql:

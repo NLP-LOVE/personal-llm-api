@@ -1,3 +1,5 @@
+
+-- V1.0--
 create table if not exists llm_provider
 (
     id                    BIGINT   not null primary key,
@@ -132,3 +134,4 @@ create index llm_user_password_index
 
 INSERT INTO llm_user (id, username, password, is_first_login) VALUES (1, 'stark', '12345678', 1);
 
+-- V1.0--

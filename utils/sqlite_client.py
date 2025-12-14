@@ -36,6 +36,7 @@ class SqliteClient(object):
 
     async def execute(self, sql):
         async with aiosqlite.connect(self.db_path) as db:
+            await db.execute('PRAGMA synchronous = OFF;')
             await db.execute(sql)
             await db.commit()
 
@@ -45,6 +46,8 @@ class SqliteClient(object):
                 update_query = f'UPDATE {table_name} SET {", ".join([f"{key} = ?" for key in data.keys()])} WHERE {where}'
             else:
                 update_query = f'UPDATE {table_name} SET {", ".join([f"{key} = ?" for key in data.keys()])}'
+
+            await db.execute('PRAGMA synchronous = OFF;')
             await db.execute(update_query, list(data.values()))
             await db.commit()
 
@@ -65,6 +68,8 @@ class SqliteClient(object):
             return None
 
         async with aiosqlite.connect(self.db_path) as db:
+            await db.execute('PRAGMA synchronous = OFF;')
+
             columns = ', '.join(data[0].keys())
             placeholders = ', '.join(['?'] * len(data[0]))
             insert_query = f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})'

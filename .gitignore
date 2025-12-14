@@ -2,6 +2,5 @@
 __pycache__
 .idea
 app_config.yaml
-note.md
 logs
 static/images/chat/
