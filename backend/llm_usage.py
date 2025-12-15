@@ -64,7 +64,7 @@ def get_month_params(params):
     for i in range(params.before_num - 1, -1, -1):
         month_str = get_before_month(i)
 
-        xAxis.append(month_str)
+        xAxis.append(month_str[:7])
         yAxis.append(0)
     date_str = get_before_month(params.before_num - 1) + ' 00:00:00'
     search_column_name = 'create_month'

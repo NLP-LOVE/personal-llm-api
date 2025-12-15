@@ -28,6 +28,7 @@ class SqliteClient(object):
                 _dict = {}
                 for col, val in zip(columns, row):
                     if col == 'create_time' or col == 'update_time':
+                        val = val[0:19]
                         val = datetime.strptime(val, '%Y-%m-%d %H:%M:%S')
                     _dict[col] = val
                 data.append(_dict)
