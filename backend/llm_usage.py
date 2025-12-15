@@ -287,7 +287,7 @@ async def chart_money(request: Request, params: ChartBase = Depends(get_chart_pa
     for item in res:
         for i, name in enumerate(xAxis):
             if name in res:
-                yAxis[i] = res[name]['price']
+                yAxis[i] = f"{res[name]['price']:.6g}"
 
     yAxis = [random.uniform(0.02, 5) for item in yAxis]
     data = {

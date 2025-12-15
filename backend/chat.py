@@ -25,11 +25,13 @@ async def chat_history(request: Request, params: PaginationParams = Depends(get_
 
         item['prompt'] = item['prompt'][:40] + '...'
         item['id'] = i + 1 + (params.page - 1) * params.perPage
+        item['total_price'] = item['input_price'] + item['output_price']
         item['input_price'] = "{0:.15f}".format(item['input_price']).rstrip('0').rstrip('.')
         item['output_price'] = "{0:.15f}".format(item['output_price']).rstrip('0').rstrip('.')
 
-        item['prompt_tokens'] = f"{item['prompt_tokens']} / {item['input_price']}元"
+        item['prompt_tokens'] = f"{item['prompt_tokens']} ⋙ {item['completion_tokens']}"
         item['completion_tokens'] = f"{item['completion_tokens']} / {item['output_price']}元"
+        item['total_price'] = f"{item['total_price']:.6g} 元"
         item['context'] = json.loads(item['context'])
         item['context'].append({'role': 'assistant', 'content': item['answer']})
         if item['update_time'] and item['create_time']:
