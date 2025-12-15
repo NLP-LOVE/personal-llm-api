@@ -1,5 +1,6 @@
 import os
 import asyncio
+import shutil
 
 from loguru import logger
 current_file_path = os.path.abspath(__file__)
@@ -23,6 +24,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic_core import ValidationError
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from init import init_db
 from config import settings
@@ -76,6 +78,21 @@ app.include_router(api_router)
 app.include_router(chat_router)
 
 
+def my_scheduled_job():
+    # 源文件路径
+    src_file = os.path.join(settings.PROJECT_PATH, 'db', 'llm_backup.db')
+    # 目标文件路径（包括新文件名）
+    dst_file = os.path.join(settings.PROJECT_PATH, 'db', 'llm.db')
+    # 复制并重命名文件，如果目标文件已存在则覆盖
+    shutil.copy2(src_file, dst_file)
+
+@app.on_event("startup")
+async def startup_event():
+    my_scheduled_job()
+    scheduler = BackgroundScheduler()
+    # 添加定时任务，每天凌晨 4 点执行
+    scheduler.add_job(my_scheduled_job, "cron", hour=4, minute=0)
+    scheduler.start()
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):

@@ -1,5 +1,6 @@
 import datetime
 from typing import Optional
+import random
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, field_validator
@@ -64,7 +65,7 @@ def get_month_params(params):
     for i in range(params.before_num - 1, -1, -1):
         month_str = get_before_month(i)
 
-        xAxis.append(month_str)
+        xAxis.append(month_str[:7])
         yAxis.append(0)
     date_str = get_before_month(params.before_num - 1) + ' 00:00:00'
     search_column_name = 'create_month'
@@ -115,6 +116,7 @@ async def chart_request(request: Request, params: ChartBase = Depends(get_chart_
         if index != -1:
             yAxis[index] = item['count']
 
+    yAxis = [random.randint(10, 100) for item in yAxis]
     data = {
         "tooltip": {
             "trigger": 'axis'
@@ -207,6 +209,9 @@ async def chart_token(request: Request, params: ChartBase = Depends(get_chart_pa
                 yAxis_prompt[i] = res[name]['prompt_tokens']
                 yAxis_completion[i] = res[name]['completion_tokens']
 
+    yAxis_prompt = [random.randint(10000, 100000) for item in yAxis_prompt]
+    yAxis_completion = [random.randint(10000, 100000) for item in yAxis_completion]
+
     data = {
         "tooltip": {
             "trigger": 'axis'
@@ -284,6 +289,7 @@ async def chart_money(request: Request, params: ChartBase = Depends(get_chart_pa
             if name in res:
                 yAxis[i] = res[name]['price']
 
+    yAxis = [random.uniform(0.02, 5) for item in yAxis]
     data = {
         "tooltip": {
             "trigger": 'axis'

@@ -56,12 +56,7 @@ class Settings():
         self.PROJECT_PATH = os.path.dirname(__file__)
 
         # 代理设置
-        if yaml_config['proxy']['type'] == 'system':
-            self.PROXIES = get_system_proxies()
-        elif yaml_config['proxy']['type'] == 'manual':
-            self.PROXIES = yaml_config['proxy']['url']
-        else:
-            self.PROXIES = None
+        self.PROXIES = None
 
         print()
 

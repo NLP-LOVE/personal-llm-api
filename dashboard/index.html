@@ -53,8 +53,17 @@
             body: [
                 {
                     "type": "flex",
-                    "justify": "flex-end",
+                    "justify": "space-between",
                     "items": [
+                        {
+                            "type": "tpl",
+                            "tpl": "."
+                        },
+                        {
+                            "type": "tpl",
+                            "tpl": "Demo 演示",
+                            "class": "font-medium text-lg"
+                        },
                         {
                             "label": "退出登录",
                             "type": "button",
@@ -83,7 +92,7 @@
                 }
             ],
           },
-          footer: '<div class="p-2 text-center bg-light" style="font-size: 14px !important;">powered by <a href="https://aisuda.github.io/amis-1.1.7/zh-CN/docs/index" target="_blank">amis-6.13.0</a></div>',
+          footer: '<div class="p-2 text-center bg-light" style="font-size: 14px !important;">Created by <a href="https://github.com/NLP-LOVE" target="_blank" style="font-color: #000000;">🐱NLP-LOVE</a></div>',
           asideBefore: '<div class="p-2 text-center"></div>',
           // asideAfter: '<div class="p-2 text-center">菜单后面区域</div>',
           api: {
