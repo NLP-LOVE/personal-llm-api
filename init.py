@@ -132,8 +132,11 @@ async def init_models():
         if model['model_name'] not in models_dict:
             models_dict[model['model_name']] = [llm_service]
             models_dict_num[model['model_name']] = 0
+            models_dict[model['model_id']] = [llm_service]
+            models_dict_num[model['model_id']] = 0
         else:
             models_dict[model['model_name']].append(llm_service)
+            models_dict[model['model_id']].append(llm_service)
 
     MODELS_OBJ['models_dict'] = models_dict
     MODELS_OBJ['models_dict_num'] = models_dict_num

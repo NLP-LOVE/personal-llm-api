@@ -19,11 +19,11 @@
             },
             {
                 "name": "prompt_tokens",
-                "label": "输入 token"
+                "label": "输入/输出 token"
             },
             {
-                "name": "completion_tokens",
-                "label": "输出 token"
+                "name": "total_price",
+                "label": "总费用"
             },
             {
                 "name": "create_time",
