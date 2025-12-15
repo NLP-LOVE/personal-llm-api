@@ -7,6 +7,7 @@
             "actionType": "dialog",
             "level": "primary",
             "className": "m-b-sm",
+            "icon": "fa fa-plus",
             "dialog": {
                 "title": "新增模型供应商",
                 "body": {
@@ -74,10 +75,11 @@
                         {
                             "label": "修改",
                             "type": "button",
+                            "level": "light",
                             "actionType": "dialog",
                             "className": "m-b-sm",
                             "dialog": {
-                                "title": "修改标签",
+                                "title": "修改模型供应商",
                                 "body": {
                                     "type": "form",
                                     "api": "post:/backend/api-manage/provider/update",
@@ -135,6 +137,7 @@
             "actionType": "dialog",
             "level": "primary",
             "className": "m-b-sm mt-8",
+            "icon": "fa fa-plus",
             "dialog": {
                 "title": "新增模型接口",
                 "body": {
@@ -276,10 +279,11 @@
                         {
                             "label": "修改",
                             "type": "button",
+                            "level": "light",
                             "actionType": "dialog",
                             "className": "m-b-sm",
                             "dialog": {
-                                "title": "修改标签",
+                                "title": "修改模型接口",
                                 "body": {
                                     "type": "form",
                                     "api": "post:/backend/api-manage/model/update",
