@@ -110,6 +110,7 @@
                         {
                           "label": "删除",
                           "type": "button",
+                          "className": "text-md",
                           "actionType": "ajax",
                           "confirmText": "确认要删除？",
                           "api": "get:/backend/api-manage/key/delete?id=${id}",

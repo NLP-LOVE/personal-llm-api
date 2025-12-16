@@ -77,7 +77,7 @@
                             "type": "button",
                             "level": "light",
                             "actionType": "dialog",
-                            "className": "m-b-sm",
+                            "className": "m-b-sm text-md",
                             "dialog": {
                                 "title": "修改模型供应商",
                                 "body": {
@@ -122,6 +122,7 @@
                         {
                           "label": "删除",
                           "type": "button",
+                          "className": "text-md",
                           "actionType": "ajax",
                           "confirmText": "确认要删除？",
                           "api": "get:/backend/api-manage/provider/delete?id=${id}",
@@ -281,7 +282,7 @@
                             "type": "button",
                             "level": "light",
                             "actionType": "dialog",
-                            "className": "m-b-sm",
+                            "className": "m-b-sm text-md",
                             "dialog": {
                                 "title": "修改模型接口",
                                 "body": {
@@ -332,6 +333,7 @@
                         {
                           "label": "删除",
                           "type": "button",
+                          "className": "text-md",
                           "actionType": "ajax",
                           "confirmText": "确认要删除？",
                           "api": "get:/backend/api-manage/model/delete?id=${id}",
