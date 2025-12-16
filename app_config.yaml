@@ -16,7 +16,7 @@ database:
     password: 123
     database: db
 
-# 代理设置
+# 代理设置，用于访问国外大模型服务
 proxy:
   # 代理类型，可选 system \ manual \ none
   # - system: 使用系统代理，自动获取操作系统代理设置
