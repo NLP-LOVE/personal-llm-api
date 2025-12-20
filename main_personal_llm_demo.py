@@ -1,6 +1,8 @@
 import os
 import asyncio
 import shutil
+from typing import AsyncIterator
+from contextlib import asynccontextmanager
 
 from loguru import logger
 current_file_path = os.path.abspath(__file__)
@@ -41,13 +43,33 @@ async def init_app():
 # 初始化
 asyncio.run(init_app())
 
+def my_scheduled_job():
+    # 源文件路径
+    src_file = os.path.join(settings.PROJECT_PATH, 'db', 'llm_backup.db')
+    # 目标文件路径（包括新文件名）
+    dst_file = os.path.join(settings.PROJECT_PATH, 'db', 'llm.db')
+    # 复制并重命名文件，如果目标文件已存在则覆盖
+    shutil.copy2(src_file, dst_file)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    my_scheduled_job()
+    scheduler = BackgroundScheduler()
+    # 添加定时任务，每天凌晨 4 点执行
+    scheduler.add_job(my_scheduled_job, "cron", hour=4, minute=0)
+    scheduler.start()
+
+    yield  # 应用程序运行
+
 
 
 # 创建FastAPI应用实例
 app = FastAPI(
     docs_url=None,      # 禁用 Swagger UI
     redoc_url=None,     # 禁用 ReDoc
-    openapi_url=None    # 禁用 OpenAPI JSON
+    openapi_url=None,    # 禁用 OpenAPI JSON
+    lifespan=lifespan
 )
 
 app.add_middleware(
@@ -76,23 +98,6 @@ app.include_router(backend_router)
 app.include_router(llm_usage_router)
 app.include_router(api_router)
 app.include_router(chat_router)
-
-
-def my_scheduled_job():
-    # 源文件路径
-    src_file = os.path.join(settings.PROJECT_PATH, 'db', 'llm_backup.db')
-    # 目标文件路径（包括新文件名）
-    dst_file = os.path.join(settings.PROJECT_PATH, 'db', 'llm.db')
-    # 复制并重命名文件，如果目标文件已存在则覆盖
-    shutil.copy2(src_file, dst_file)
-
-@app.on_event("startup")
-async def startup_event():
-    my_scheduled_job()
-    scheduler = BackgroundScheduler()
-    # 添加定时任务，每天凌晨 4 点执行
-    scheduler.add_job(my_scheduled_job, "cron", hour=4, minute=0)
-    scheduler.start()
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):

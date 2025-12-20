@@ -22,16 +22,16 @@ class ProviderBase(BaseModel):
             raise ValueError('base-url 必须是网址')
         return value
 
-# 创建供应商
+# 创建提供商
 @router.post("/provider/create")
 @require_auth
 async def provider_create(request: Request, params: ProviderBase):
 
-    # 判断供应商名称是否存在
+    # 判断提供商名称是否存在
     sql = f'select * from llm_provider where provider_name = "{params.provider_name}"'
     result = await db_client.select(sql)
     if result:
-        return {"status": 1, "msg": "供应商名称已存在", "data": {}}
+        return {"status": 1, "msg": "提供商名称已存在", "data": {}}
 
     data = {}
     data['id'] = snowflake.next_id()
@@ -46,7 +46,7 @@ async def provider_create(request: Request, params: ProviderBase):
     await db_client.insert('llm_provider', [data])
     return {"status": 0, "msg": "创建成功", "data": {}}
 
-# 获取供应商列表
+# 获取提供商列表
 @router.get("/provider/list")
 @require_auth
 async def provider_list(request: Request, params: PaginationParams = Depends(get_page_params)):
@@ -96,7 +96,7 @@ async def provider_delete(request: Request):
 
     return {"status": 0, "msg": "删除成功", "data": {}}
 
-# 更新供应商
+# 更新提供商
 @router.post("/provider/update")
 @require_auth
 async def provider_update(request: Request, params: ProviderBase):
@@ -124,6 +124,7 @@ class ModelBase(BaseModel):
     provider_english_name: str
     model_name: str
     model_id: str
+    billing_unit: str
     input_unit_price: Union[str, int, float]
     output_unit_price: Union[str, int, float]
 
@@ -138,7 +139,7 @@ class ModelBase(BaseModel):
             float(value)
         except:
             raise ValueError('输入单价必须为数字')
-        return value
+        return float(value)
 
     @field_validator('output_unit_price')
     def validate_output_unit_price(cls, value):
@@ -151,7 +152,7 @@ class ModelBase(BaseModel):
             float(value)
         except:
             raise ValueError('输出单价必须为数字')
-        return value
+        return float(value)
 
 @router.post("/model/create")
 @require_auth
@@ -162,8 +163,13 @@ async def model_create(request: Request, params: ModelBase):
     data['provider_english_name'] = params.provider_english_name
     data['model_name'] = params.model_name
     data['model_id'] = params.model_id
+    data['billing_unit'] = params.billing_unit
     data['input_unit_price'] = params.input_unit_price
     data['output_unit_price'] = params.output_unit_price
+    # 统一到千token
+    if data['billing_unit'] == 'per_million_tokens':
+        data['input_unit_price'] /= 1000
+        data['output_unit_price'] /= 1000
     data['status'] = 1
     current_timestamp = get_current_timestamp()
     data['create_time'] = current_timestamp[:-4]
@@ -184,6 +190,14 @@ async def model_list(request: Request, params: PaginationParams = Depends(get_pa
         item['id'] = str(item['id'])
         item['status'] = True if item['status'] == 1 else False
         item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+        # 准备百万token的单价 和千token的单价
+        item['input_unit_price_thousand'] = item['input_unit_price']
+        item['output_unit_price_thousand'] = item['output_unit_price']
+        item['input_unit_price_million'] = item['input_unit_price'] * 1000
+        item['output_unit_price_million'] = item['output_unit_price'] * 1000
+        if item['billing_unit'] == 'per_million_tokens':
+            item['input_unit_price'] *= 1000
+            item['output_unit_price'] *= 1000
 
     sql = 'select count(*) as cou from llm_model where is_delete=0'
     total = await db_client.select(sql)
@@ -204,10 +218,16 @@ async def model_update(request: Request, params: ModelBase):
     status = 0 if not request_data.get('status', None) else 1
     current_timestamp = get_current_timestamp()[:-4]
 
+    # 统一到千token
+    if params.billing_unit == 'per_million_tokens':
+        params.input_unit_price /= 1000
+        params.output_unit_price /= 1000
+
     sql = 'update llm_model set '+ \
         f'provider_english_name="{params.provider_english_name}",'+ \
         f'model_name="{params.model_name}",'+ \
         f'model_id="{params.model_id}",'+ \
+        f'billing_unit="{params.billing_unit}",'+ \
         f'input_unit_price={params.input_unit_price},'+ \
         f'output_unit_price={params.output_unit_price},'+ \
         f'status={status},'+ \

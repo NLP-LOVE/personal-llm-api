@@ -324,3 +324,18 @@ async def chart_money(request: Request, params: ChartBase = Depends(get_chart_pa
 
     data = {'status': 0, 'msg': '', 'data': data}
     return data
+
+
+
+@router.get("/total-usage")
+@require_auth
+async def total_usage(request: Request):
+
+    data = {
+        'total_request': '3600',
+        'total_tokens': '158546',
+        'total_price': '50.65'
+    }
+
+    data = {'status': 0, 'msg': '', 'data': data}
+    return data

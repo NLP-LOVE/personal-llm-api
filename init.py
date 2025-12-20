@@ -132,8 +132,11 @@ async def init_models():
         if model['model_name'] not in models_dict:
             models_dict[model['model_name']] = [llm_service]
             models_dict_num[model['model_name']] = 0
+            models_dict[model['model_id']] = [llm_service]
+            models_dict_num[model['model_id']] = 0
         else:
             models_dict[model['model_name']].append(llm_service)
+            models_dict[model['model_id']].append(llm_service)
 
     MODELS_OBJ['models_dict'] = models_dict
     MODELS_OBJ['models_dict_num'] = models_dict_num
@@ -142,7 +145,7 @@ async def init_models():
         db_client.pool.close()
         await db_client.pool.wait_closed()
 
-    logger.info(f'模型接口初始化完成，共初始化{len(models_dict)}个模型接口')
+    logger.info(f'模型接口初始化完成，共初始化{len(models_list)}个模型接口')
 
 # 获取模型
 def get_model(model_name):
