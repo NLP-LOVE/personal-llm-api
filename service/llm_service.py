@@ -110,7 +110,7 @@ class LLMService(object):
 
         # httpx异步请求
         params['model'] = self.model_id
-        async with httpx.AsyncClient(timeout=600, proxy=settings.PROXIES) as client:
+        async with httpx.AsyncClient(**settings.HTTPX_PARAMS) as client:
             response = await client.post(self.chat_url, json=params, headers=self.headers, timeout=600)
             if response.status_code != 200:
                 # 先读取响应内容
@@ -153,7 +153,7 @@ class LLMService(object):
         # 根据不同的供应商参数进行个性化处理
         await self.handle_params(params)
 
-        async with httpx.AsyncClient(timeout=600, proxy=settings.PROXIES) as client:
+        async with httpx.AsyncClient(**settings.HTTPX_PARAMS) as client:
             async with client.stream("POST", self.chat_url, json=params, headers=self.stream_headers) as response:
 
                 if response.status_code != 200:
@@ -259,7 +259,7 @@ class LLMService(object):
         content = []
         reasoning_content = []
         templace = {"choices": [{"delta": {"content": "", "role": "assistant"}, "index": 0}], "created": int(time.time()), "id": str(history['id']), "model": self.model_id, "service_tier": "default", "object": "chat.completion.chunk", "usage": None}
-        async with httpx.AsyncClient(timeout=600, proxy=settings.PROXIES) as client:
+        async with httpx.AsyncClient(**settings.HTTPX_PARAMS) as client:
             async with client.stream("POST", self.base_url_response, json=input_params, headers=self.stream_headers) as response:
 
                 if response.status_code != 200:

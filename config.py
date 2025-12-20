@@ -58,12 +58,14 @@ class Settings():
         # 代理设置
         if yaml_config['proxy']['type'] == 'system':
             self.PROXIES = get_system_proxies()
+            self.HTTPX_PARAMS = {'timeout': 600, 'proxy': self.PROXIES}
         elif yaml_config['proxy']['type'] == 'manual':
             self.PROXIES = yaml_config['proxy']['url']
+            self.HTTPX_PARAMS = {'timeout': 600, 'proxy': self.PROXIES}
         else:
             self.PROXIES = None
+            self.HTTPX_PARAMS = {'timeout': 600}
 
-        print()
 
 
 # 创建全局配置实例
