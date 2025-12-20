@@ -165,15 +165,32 @@
                             "required": true
                         },
                         {
+                            "type": "radios",
+                            "name": "billing_unit",
+                            "label": "计费单位",
+                            "selectFirst": true,
+                            "options": [
+                              {
+                                "label": "千 Token",
+                                "value": "per_thousand_tokens"
+                              },
+                              {
+                                "label": "百万 Token",
+                                "value": "per_million_tokens"
+                              }
+                            ],
+                            "required": true
+                        },
+                        {
                             "type": "input-text",
                             "name": "input_unit_price",
-                            "label": "模型输入单价/千token",
+                            "label": "模型输入单价",
                             "required": true
                         },
                         {
                             "type": "input-text",
                             "name": "output_unit_price",
-                            "label": "模型输出单价/千token",
+                            "label": "模型输出单价",
                             "required": true
                         }
                     ]
@@ -262,11 +279,11 @@
                     "copyable": true
                 },
                 {
-                    "name": "input_unit_price",
+                    "name": "input_unit_price_thousand",
                     "label": "模型输入单价/千token"
                 },
                 {
-                    "name": "output_unit_price",
+                    "name": "output_unit_price_thousand",
                     "label": "模型输出单价/千token"
                 },
                 {
@@ -317,14 +334,33 @@
                                             "label": "模型ID"
                                         },
                                         {
+                                            "type": "radios",
+                                            "name": "billing_unit",
+                                            "label": "计费单位",
+                                            "selectFirst": true,
+                                            "options": [
+                                              {
+                                                "label": "千 Token",
+                                                "value": "per_thousand_tokens"
+                                              },
+                                              {
+                                                "label": "百万 Token",
+                                                "value": "per_million_tokens"
+                                              }
+                                            ],
+                                            "required": true
+                                        },
+                                        {
                                             "type": "input-text",
                                             "name": "input_unit_price",
-                                            "label": "模型输入单价/千token"
+                                            "label": "模型输入单价",
+                                            "value": "${IF(billing_unit == 'per_thousand_tokens', input_unit_price_thousand, input_unit_price_million)}"
                                         },
                                         {
                                             "type": "input-text",
                                             "name": "output_unit_price",
-                                            "label": "模型输出单价/千token"
+                                            "label": "模型输出单价",
+                                            "value": "${IF(billing_unit == 'per_thousand_tokens', output_unit_price_thousand, output_unit_price_million)}"
                                         }
                                     ]
                                 }

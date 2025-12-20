@@ -27,6 +27,7 @@ create table if not exists llm_model
     provider_english_name VARCHAR(50)  null,
     model_name            VARCHAR(50)  null,
     model_id              VARCHAR(50)  null,
+    billing_unit         VARCHAR(50)  null,
     input_unit_price      FLOAT null,
     output_unit_price     FLOAT null,
     status                TINYINT      null,

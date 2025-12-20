@@ -145,7 +145,7 @@ async def init_models():
         db_client.pool.close()
         await db_client.pool.wait_closed()
 
-    logger.info(f'模型接口初始化完成，共初始化{len(models_dict)}个模型接口')
+    logger.info(f'模型接口初始化完成，共初始化{len(models_list)}个模型接口')
 
 # 获取模型
 def get_model(model_name):

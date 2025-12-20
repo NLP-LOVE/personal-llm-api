@@ -24,6 +24,7 @@ create table if not exists llm_model
     provider_english_name VARCHAR(50)  null comment 'LLM提供商英文名',
     model_name            VARCHAR(50)  null comment 'LLM模型名称',
     model_id    VARCHAR(50)  null comment 'LLM模型ID',
+    billing_unit         VARCHAR(50)  null comment '计费单位',
     input_unit_price      FLOAT null comment 'LLM模型输入单价',
     output_unit_price     FLOAT null comment 'LLM模型输出单价',
     status                TINYINT      null comment 'LLM模型状态, 0: 禁用, 1: 启用',
