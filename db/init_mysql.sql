@@ -39,7 +39,7 @@ create index llm_model_provider_english_name_index
 create index llm_model_status_index
     on llm_model (status);
 
-INSERT INTO llm_model (id, provider_english_name, model_name, model_id, input_unit_price, output_unit_price, status, create_time, update_time) VALUES (786255595048009728, 'DeepSeek', 'deepseek-v3.2', 'deepseek-reasoner', 0.002, 0.003, 1, '2025-12-09 23:39:01', '2025-12-09 23:39:01');
+INSERT INTO llm_model (id, provider_english_name, model_name, model_id, billing_unit, input_unit_price, output_unit_price, status, create_time, update_time) VALUES (786255595048009728, 'DeepSeek', 'deepseek-v3.2', 'deepseek-reasoner', 'per_thousand_tokens', 0.002, 0.003, 1, '2025-12-09 23:39:01', '2025-12-09 23:39:01');
 
 
 
