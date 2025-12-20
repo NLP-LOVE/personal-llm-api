@@ -7,6 +7,7 @@
             "level": "primary",
             "className": "m-b-sm",
             "actionType": "ajax",
+            "icon": "fa fa-plus",
             "api": "get:/backend/api-manage/key/create",
             "reload": "key-crud"
         },

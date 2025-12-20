@@ -133,6 +133,7 @@
                 {
                     "type": "submit",
                     "level": "primary",
+                    "icon": "fa fa-search",
                     "label": "查询"
                 }
             ]

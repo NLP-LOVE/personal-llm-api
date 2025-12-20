@@ -23,16 +23,16 @@ class ProviderBase(BaseModel):
             raise ValueError('base-url 必须是网址')
         return value
 
-# 创建供应商
+# 创建提供商
 @router.post("/provider/create")
 @require_auth
 async def provider_create(request: Request, params: ProviderBase):
 
-    # 判断供应商名称是否存在
+    # 判断提供商名称是否存在
     sql = f'select * from llm_provider where provider_name = "{params.provider_name}"'
     result = await db_client.select(sql)
     if result:
-        return {"status": 1, "msg": "供应商名称已存在", "data": {}}
+        return {"status": 1, "msg": "提供商名称已存在", "data": {}}
 
     data = {}
     data['id'] = snowflake.next_id()
@@ -48,7 +48,7 @@ async def provider_create(request: Request, params: ProviderBase):
     await init_models()
     return {"status": 0, "msg": "创建成功", "data": {}}
 
-# 获取供应商列表
+# 获取提供商列表
 @router.get("/provider/list")
 @require_auth
 async def provider_list(request: Request, params: PaginationParams = Depends(get_page_params)):
@@ -99,7 +99,7 @@ async def provider_delete(request: Request):
     await init_models()
     return {"status": 0, "msg": "删除成功", "data": {}}
 
-# 更新供应商
+# 更新提供商
 @router.post("/provider/update")
 @require_auth
 async def provider_update(request: Request, params: ProviderBase):
