@@ -318,3 +318,25 @@ async def chart_money(request: Request, params: ChartBase = Depends(get_chart_pa
 
     data = {'status': 0, 'msg': '', 'data': data}
     return data
+
+
+
+@router.get("/total-usage")
+@require_auth
+async def total_usage(request: Request):
+    sql = """
+        SELECT COUNT(1) AS total_request, SUM(prompt_tokens) AS prompt_tokens, SUM(completion_tokens) AS completion_tokens, SUM(input_price) AS input_price, SUM(output_price) AS output_price
+        FROM llm_chat_history where update_time is not null
+    """
+
+    res = await db_client.select(sql)
+    res = res[0]
+
+    data = {
+        'total_request': str(res['total_request']),
+        'total_tokens': str(res['prompt_tokens'] + res['completion_tokens']),
+        'total_price': str(round(res['input_price'] + res['output_price'], 2))
+    }
+
+    data = {'status': 0, 'msg': '', 'data': data}
+    return data
