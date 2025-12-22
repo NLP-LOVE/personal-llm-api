@@ -27,7 +27,9 @@ Personal LLM API 是一款轻量级的 LLM 接口服务，与 [one-api](https://
 - ✅️支持设置`proxy`代理访问。
 - ✅️方便个人使用和部署，不支持多租户设计。
 - ✅️后台界面使用 [amis](https://aisuda.bce.baidu.com/amis/zh-CN/docs/index) 低代码进行构建，方便扩展。
-- 🔲计划开发使用 [seekdb](https://www.oceanbase.ai/zh-CN/) AI 原生数据库的 RAG 应用及接口服务。
+- 🔲计划开发使用 [seekdb](https://www.oceanbase.ai/zh-CN/) AI 原生数据库的 RAG 应用及接口服务...
+- 🔲计划支持RAG应用和相应接口...
+- 🔲计划支持 prompt 管理功能...
 
 
 
@@ -70,6 +72,8 @@ test
 ├── dashboard/             # 后台管理界面
 │   ├── index.html         # 主页面
 │   ├── login.html         # 登录页面
+│   ├── reset_password.html   # 重置密码页面
+│   ├── aside.json         # 侧边导航
 │   └── pages/             # 页面配置
 ├── db/                    # 数据库相关
 │   ├── init_mysql.sql     # MySQL初始化脚本
@@ -142,7 +146,62 @@ python3 main_personal_llm.py
 nohup python3 main_personal_llm.py &
 ```
 
-👉️5.然后通过浏览器访问：
+👉️5.然后通过浏览器访问后台：
 ```bash
 http://127.0.0.1:2321/dashboard
 ```
+
+👉️6.在后台配置 LLM 提供商和相应的模型即可：
+
+`model_name`参数可选用：`模型名称`或`模型ID`
+
+![](http://img.dx3906.info/img/2025/12/22/llm.png)
+
+
+## Chat Completion 接口
+支持`/chat/completions`或`v1/chat/completions`对话补全接口，兼容性更强。
+
+接口文档可详见各大平台文档：[https://api-docs.deepseek.com/zh-cn/api/create-chat-completion](https://api-docs.deepseek.com/zh-cn/api/create-chat-completion)
+
+### 🌍️web search(联网搜索)
+1. **火山云(方舟)平台模型**
+官方的`web search`只支持`response`接口方式使用，该项目的`/chat/completions`接口已完成兼容，在调用火山云 LLM 模型接口时，只需要额外传入`web_search=true`参数即可使用。
+
+2. **阿里云(百炼)平台模型**
+只需要传入`enable_search=true`参数即可，详见：👉️[文档链接](https://help.aliyun.com/zh/model-studio/web-search?spm=a2c4g.11186623.help-menu-2400256.d_0_2_8_0.284976b8nevTcQ)
+
+3. **OpenRouter平台模型**
+
+只需要在`模型名称`或`模型ID`后面添加`:online`即可，例如：
+```bash
+google/gemini-3-flash-preview:online
+```
+详见 OpenRouter [官方文档](https://openrouter.ai/docs/guides/features/plugins/web-search)
+
+
+## 可搭配🍓 Cherry studio 使用
+
+1. 在模型服务下进行相应配置
+
+![](http://img.dx3906.info/img/2025/12/22/cherry_studio.png)
+
+2. 也可以在助手里配置每次对话时额外的请求参数，例如控制模型的深度思考。
+
+![](http://img.dx3906.info/img/2025/12/22/cherry_assistant.png)
+
+
+## 后台功能展示
+
+1. 可查看 LLM 接口使用量和统计信息
+
+![](http://img.dx3906.info/img/2025/12/22/llm_usage.png)
+
+2. 可管理模型接口和key
+
+3. 可查看对话历史记录
+
+![](http://img.dx3906.info/img/2025/12/22/llm_history.png)
+## 作者
+
+- [@octokatherine](https://www.github.com/octokatherine)
+

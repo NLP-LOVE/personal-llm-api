@@ -126,6 +126,10 @@ async def init_models():
         elif model['provider_english_name'] == 'OpenRouter':
             llm_service = OpenRouterLLMService(**params)
 
+            # 兼容OpenRouter模型的联网搜索
+            params['model_id'] += ':online'
+            llm_service_online = OpenRouterLLMService(**params)
+
         else:
             llm_service = LLMService(**params)
 
@@ -134,6 +138,13 @@ async def init_models():
             models_dict_num[model['model_name']] = 0
             models_dict[model['model_id']] = [llm_service]
             models_dict_num[model['model_id']] = 0
+
+            # 兼容OpenRouter模型的联网搜索
+            if model['provider_english_name'] == 'OpenRouter':
+                models_dict[model['model_name'] + ':online'] = [llm_service_online]
+                models_dict_num[model['model_name'] + ':online'] = 0
+                models_dict[model['model_id'] + ':online'] = [llm_service_online]
+                models_dict_num[model['model_id'] + ':online'] = 0
         else:
             models_dict[model['model_name']].append(llm_service)
             models_dict[model['model_id']].append(llm_service)
