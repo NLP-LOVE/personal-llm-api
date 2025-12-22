@@ -155,7 +155,7 @@ http://127.0.0.1:2321/dashboard
 
 `model_name`参数可选用：`模型名称`或`模型ID`
 
-![](http://img.dx3906.info/img/2025/12/22/llm.png)
+![](./static/images/llm.png)
 
 
 ## Chat Completion 接口
@@ -183,24 +183,24 @@ google/gemini-3-flash-preview:online
 
 1. 在模型服务下进行相应配置
 
-![](http://img.dx3906.info/img/2025/12/22/cherry_studio.png)
+![](./static/images/cherry_studio.png)
 
 2. 也可以在助手里配置每次对话时额外的请求参数，例如控制模型的深度思考。
 
-![](http://img.dx3906.info/img/2025/12/22/cherry_assistant.png)
+![](./static/images/cherry_assistant.png)
 
 
 ## 后台功能展示
 
 1. 可查看 LLM 接口使用量和统计信息
 
-![](http://img.dx3906.info/img/2025/12/22/llm_usage.png)
+![](./static/images/llm_usage.png)
 
 2. 可管理模型接口和key
 
 3. 可查看对话历史记录
 
-![](http://img.dx3906.info/img/2025/12/22/llm_history.png)
+![](./static/images/llm_history.png)
 ## 作者
 
 - [@octokatherine](https://www.github.com/octokatherine)
