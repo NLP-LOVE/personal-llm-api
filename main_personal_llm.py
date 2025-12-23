@@ -183,7 +183,7 @@ def validate_chat_params(params: dict):
     return params
 
 
-# 3. 定义路由和视图函数
+# 定义路由和视图函数
 @app.post('/v1/chat/completions')
 @app.post('/chat/completions')
 async def chat_completions(request: Request):

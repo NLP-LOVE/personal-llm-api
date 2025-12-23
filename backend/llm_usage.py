@@ -84,6 +84,7 @@ def get_year_params(params):
 
     return xAxis, yAxis, date_str, search_column_name
 
+# 获取请求次数图表数据
 @router.get("/chart-request")
 @require_auth
 async def chart_request(request: Request, params: ChartBase = Depends(get_chart_params)):
@@ -150,7 +151,7 @@ async def chart_request(request: Request, params: ChartBase = Depends(get_chart_
     data = {'status': 0, 'msg': '', 'data': data}
     return data
 
-
+# 获取token使用图表数据
 @router.get("/chart-token")
 @require_auth
 async def chart_token(request: Request, params: ChartBase = Depends(get_chart_params)):
@@ -252,7 +253,7 @@ async def chart_token(request: Request, params: ChartBase = Depends(get_chart_pa
     data = {'status': 0, 'msg': '', 'data': data}
     return data
 
-
+# 获取消费金额图表数据
 @router.get("/chart-money")
 @require_auth
 async def chart_money(request: Request, params: ChartBase = Depends(get_chart_params)):
@@ -320,7 +321,7 @@ async def chart_money(request: Request, params: ChartBase = Depends(get_chart_pa
     return data
 
 
-
+# 获取总使用情况
 @router.get("/total-usage")
 @require_auth
 async def total_usage(request: Request):

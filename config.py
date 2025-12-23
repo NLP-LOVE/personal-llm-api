@@ -12,7 +12,7 @@ def install_statistics(project_path):
     except:
         pass
 
-
+# 获取系统代理设置
 def get_system_proxies():
     if sys.platform == 'win32':
         # Windows系统代理获取逻辑
@@ -33,7 +33,7 @@ def get_system_proxies():
 
     return None
 
-
+# 全局配置类
 class Settings():
 
     def __init__(self, **kwargs):
