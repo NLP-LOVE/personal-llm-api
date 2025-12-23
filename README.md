@@ -3,7 +3,12 @@
 
 Personal LLM API 是一款轻量级的 LLM 接口服务，与 [one-api](https://github.com/songquanpeng/one-api) 相比，本项目更加简洁易用，专为个人用户打造统一的 LLM 接口管理方案。基于 Python 开发，采用 FastAPI 框架实现高性能接口服务，后台管理界面使用 amis 低代码开发，无需复杂的前端技术即可快速构建管理控制台。
 
-项目特点：
+**为什么要开发这样的项目：**
+- 非常喜欢使用 Cherry studio 这个 LLM 客户端，不仅接口能够自定义，功能全面，而且主题/字体都能够自定义，美观，'打字机'的流式输出也非常丝滑，结合本项目简直完美。
+- 市面上的大模型接口提供商非常多，优惠力度也有差异，本项目统一管理自己的 LLM 接口，能够更方便地进行使用和监控。
+- 考虑到个人使用场景，本项目能够很方便的进行二次开发扩展。
+
+**项目特点：**
 - 🧿极简架构：核心代码精简，易于理解和部署
 - 🐍Python 原生：全栈 Python 实现，降低技术栈复杂度
 - 📜低代码后台管理：基于 [amis](https://aisuda.bce.baidu.com/amis/zh-CN/docs/index) 构建的管理界面，可视化配置更高效
@@ -161,6 +166,8 @@ http://127.0.0.1:2321/dashboard
 ## Chat Completion 接口
 支持`/chat/completions`或`v1/chat/completions`对话补全接口，兼容性更强。
 
+支持`Function Calling`以及`web search(联网搜索)`。
+
 接口文档可详见各大平台文档：[https://api-docs.deepseek.com/zh-cn/api/create-chat-completion](https://api-docs.deepseek.com/zh-cn/api/create-chat-completion)
 
 ### 🌍️web search(联网搜索)
@@ -203,5 +210,5 @@ google/gemini-3-flash-preview:online
 ![](./static/images/llm_history.png)
 ## 作者
 
-- [@octokatherine](https://www.github.com/octokatherine)
+- [@Stark](https://github.com/NLP-LOVE)
 
