@@ -334,10 +334,14 @@ async def total_usage(request: Request):
     res = res[0]
 
     if res['total_request'] != 0:
+        total_price = str(round(res['input_price'] + res['output_price'], 2))
+        if total_price == '0.0':
+            total_price = str(round(res['input_price'] + res['output_price'], 6))
+
         data = {
             'total_request': str(res['total_request']),
             'total_tokens': str(res['prompt_tokens'] + res['completion_tokens']),
-            'total_price': str(round(res['input_price'] + res['output_price'], 2))
+            'total_price': total_price
         }
 
     else:
