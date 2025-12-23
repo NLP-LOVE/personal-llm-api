@@ -332,11 +332,19 @@ async def total_usage(request: Request):
     res = await db_client.select(sql)
     res = res[0]
 
-    data = {
-        'total_request': str(res['total_request']),
-        'total_tokens': str(res['prompt_tokens'] + res['completion_tokens']),
-        'total_price': str(round(res['input_price'] + res['output_price'], 2))
-    }
+    if res['total_request'] != 0:
+        data = {
+            'total_request': str(res['total_request']),
+            'total_tokens': str(res['prompt_tokens'] + res['completion_tokens']),
+            'total_price': str(round(res['input_price'] + res['output_price'], 2))
+        }
+
+    else:
+        data = {
+            'total_request': '0',
+            'total_tokens': '0',
+            'total_price': '0.00'
+        }
 
     data = {'status': 0, 'msg': '', 'data': data}
     return data

@@ -102,7 +102,7 @@ test
 
 👉️1.所需 Python 版本：
 ```bash
-pip install -r requirements.txt
+python >= 3.9
 ```
 
 👉️2.使用 pip 安装所需 Python 包：

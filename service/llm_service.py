@@ -39,6 +39,10 @@ class LLMService(object):
 
 
     async def create_history(self, params):
+
+        if self.key == 'test':
+            raise HTTPException(status_code=403, detail=f'请在后台设置{self.provider_english_name}的API Key')
+
         history = {}
         history['id'] = snowflake.next_id()
         context = await self.construct_db_context(params)
