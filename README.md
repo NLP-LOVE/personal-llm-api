@@ -212,3 +212,5 @@ google/gemini-3-flash-preview:online
 
 - [@Stark](https://github.com/NLP-LOVE)
 
+![](./static/images/wechat_group1.png)
+
