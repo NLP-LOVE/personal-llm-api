@@ -12,7 +12,7 @@ from config import settings
 # 供应商模型接口基类
 class LLMService(object):
 
-    def __init__(self, id, base_url, model_id, api_key, provider_english_name, model_name, input_unit_price, output_unit_price):
+    def __init__(self, id, base_url, model_id, api_key, provider_english_name, model_name, input_unit_price, output_unit_price, default_params):
         self.id = id
         self.base_url_response = base_url + '/responses' if base_url[-1] != '/' else base_url + 'responses'
         self.chat_url = base_url + '/chat/completions' if base_url[-1] != '/' else base_url + 'chat/completions'
@@ -23,6 +23,7 @@ class LLMService(object):
         self.provider_english_name = provider_english_name
         self.input_unit_price = input_unit_price
         self.output_unit_price = output_unit_price
+        self.default_params = json.loads(default_params) if default_params else {}
 
         self.headers = {
             'Content-Type': 'application/json',
@@ -114,6 +115,13 @@ class LLMService(object):
 
         # httpx异步请求
         params['model'] = self.model_id
+        # 根据不同的供应商参数进行个性化处理
+        await self.handle_params(params)
+        if self.default_params: # 合并默认参数
+            for key, value in self.default_params.items():
+                if key not in params:
+                    params[key] = value
+
         async with httpx.AsyncClient(**settings.HTTPX_PARAMS) as client:
             response = await client.post(self.chat_url, json=params, headers=self.headers, timeout=600)
             if response.status_code != 200:
@@ -156,6 +164,10 @@ class LLMService(object):
         params['model'] = self.model_id
         # 根据不同的供应商参数进行个性化处理
         await self.handle_params(params)
+        if self.default_params: # 合并默认参数
+            for key, value in self.default_params.items():
+                if key not in params:
+                    params[key] = value
 
         async with httpx.AsyncClient(**settings.HTTPX_PARAMS) as client:
             async with client.stream("POST", self.chat_url, json=params, headers=self.stream_headers) as response:
@@ -257,6 +269,10 @@ class LLMService(object):
 
         # 根据不同的供应商参数进行个性化处理
         await self.handle_params(input_params)
+        if self.default_params: # 合并默认参数
+            for key, value in self.default_params.items():
+                if key not in input_params:
+                    input_params[key] = value
 
         # httpx异步请求
         usage = None

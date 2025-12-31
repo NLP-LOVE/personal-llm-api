@@ -25,7 +25,7 @@ Personal LLM API 是一款轻量级的 LLM 接口服务，与 [one-api](https://
 - ✅️支持 `/v1/chat/completions`和`/chat/completions`的 OpenAI 接口规范。
 - ✅️支持火山云`web search`的`response`接口转换成普通的`chat`接口方式，易于接入`Cherry studio`等客户端。
 - ✅️支持`Nano Banana Pro`。
-- ✅️支持大部分的 LLM 服务提供商。
+- ✅️支持大部分的 LLM 服务提供商，并且支持自定义模型默认参数。
 - ✅️支持相同模型下的轮询负载均衡。
 - ✅️支持后台管理界面(使用统计、模型管理、对话历史、key 管理等)。
 - ✅️支持`sqlite`或`mysql`存储。
@@ -36,6 +36,10 @@ Personal LLM API 是一款轻量级的 LLM 接口服务，与 [one-api](https://
 - 🔲计划支持RAG应用和相应接口...
 - 🔲计划支持 prompt 管理功能...
 
+
+## ChangeLog
+- 2025-12-31: v1.1 新增自定义模型默认参数功能
+- 2025-12-28: v1.0 初始版本发布
 
 
 ## 技术栈

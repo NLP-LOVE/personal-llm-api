@@ -1,5 +1,5 @@
 
--- V1.0--
+-- V1.1--
 create table if not exists llm_provider
 (
     id                    BIGINT   not null primary key,
@@ -27,6 +27,7 @@ create table if not exists llm_model
     billing_unit         VARCHAR(50)  null comment '计费单位',
     input_unit_price      FLOAT null comment 'LLM模型输入单价',
     output_unit_price     FLOAT null comment 'LLM模型输出单价',
+    default_params        VARCHAR(500)  null comment '默认模型参数设置',
     status                TINYINT      null comment 'LLM模型状态, 0: 禁用, 1: 启用',
     is_delete             TINYINT default 0 null comment '是否删除, 0: 未删除, 1: 删除',
     create_time           DATETIME null,
@@ -135,4 +136,4 @@ create index llm_user_password_index
 
 INSERT INTO llm_user (id, username, password, is_first_login) VALUES (1, 'stark', '12345678', 1);
 
--- V1.0--
+-- V1.1--

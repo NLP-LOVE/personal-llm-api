@@ -116,6 +116,7 @@ async def init_models():
         params['model_name'] = model['model_name']
         params['input_unit_price'] = model['input_unit_price']
         params['output_unit_price'] = model['output_unit_price']
+        params['default_params'] = model['default_params']
 
         if model['provider_english_name'] == 'ByteDance':
             llm_service = ByteLLMService(**params)

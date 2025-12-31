@@ -1,6 +1,7 @@
-from typing import Union
+from typing import Union, Optional
 import string
 import secrets
+import json
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, field_validator
@@ -131,6 +132,7 @@ class ModelBase(BaseModel):
     billing_unit: str
     input_unit_price: Union[str, int, float]
     output_unit_price: Union[str, int, float]
+    default_params: Optional[str] = None
 
     @field_validator('input_unit_price')
     def validate_input_unit_price(cls, value):
@@ -158,6 +160,20 @@ class ModelBase(BaseModel):
             raise ValueError('输出单价必须为数字')
         return float(value)
 
+    @field_validator('default_params')
+    def validate_default_params(cls, value):
+        if value:
+            value = value.strip()
+            if not value:
+                return None
+
+            try:
+                json.loads(value)
+                return value
+            except:
+                raise ValueError('默认参数必须为JSON字符串')
+        return None
+
 @router.post("/model/create")
 @require_auth
 async def model_create(request: Request, params: ModelBase):
@@ -174,6 +190,8 @@ async def model_create(request: Request, params: ModelBase):
     if data['billing_unit'] == 'per_million_tokens':
         data['input_unit_price'] /= 1000
         data['output_unit_price'] /= 1000
+
+    data['default_params'] = params.default_params
     data['status'] = 1
     current_timestamp = get_current_timestamp()
     data['create_time'] = current_timestamp[:-4]
@@ -228,17 +246,18 @@ async def model_update(request: Request, params: ModelBase):
         params.input_unit_price /= 1000
         params.output_unit_price /= 1000
 
-    sql = 'update llm_model set '+ \
-        f'provider_english_name="{params.provider_english_name}",'+ \
-        f'model_name="{params.model_name}",'+ \
-        f'model_id="{params.model_id}",'+ \
-        f'billing_unit="{params.billing_unit}",'+ \
-        f'input_unit_price={params.input_unit_price},'+ \
-        f'output_unit_price={params.output_unit_price},'+ \
-        f'status={status},'+ \
-        f'update_time="{current_timestamp}"'+ \
-        f' where id={request_data["id"]}'
-    await db_client.execute(sql)
+    data = {}
+    data['provider_english_name'] = params.provider_english_name
+    data['model_name'] = params.model_name
+    data['model_id'] = params.model_id
+    data['billing_unit'] = params.billing_unit
+    data['input_unit_price'] = params.input_unit_price
+    data['output_unit_price'] = params.output_unit_price
+    data['default_params'] = params.default_params
+    data['status'] = status
+    data['update_time'] = current_timestamp
+
+    await db_client.update('llm_model', data, f'id={request_data["id"]}')
     
     await init_models()
     return {"status": 0, "msg": "修改成功", "data": {}}
