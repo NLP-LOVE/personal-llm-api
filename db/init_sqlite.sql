@@ -1,5 +1,5 @@
 
--- V1.0--
+-- V1.1--
 -- LLM提供商表
 create table if not exists llm_provider
 (
@@ -30,6 +30,7 @@ create table if not exists llm_model
     billing_unit         VARCHAR(50)  null,
     input_unit_price      FLOAT null,
     output_unit_price     FLOAT null,
+    default_params        VARCHAR(500)  null,
     status                TINYINT      null,
     is_delete             TINYINT default 0 null,
     create_time           DATETIME null,
@@ -137,4 +138,4 @@ create index llm_user_password_index
 
 INSERT INTO llm_user (id, username, password, is_first_login) VALUES (1, 'stark', '12345678', 1);
 
--- V1.0--
+-- V1.1--
