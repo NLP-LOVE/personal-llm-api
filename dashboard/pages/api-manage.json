@@ -392,17 +392,20 @@
                                             "label": "提供商英文名称",
                                             "type": "select",
                                             "name": "provider_english_name",
-                                            "source": "/backend/api-manage/provider/select"
+                                            "source": "/backend/api-manage/provider/select",
+                                            "required": true
                                         },
                                         {
                                             "type": "input-text",
                                             "name": "model_name",
-                                            "label": "模型名称"
+                                            "label": "模型名称",
+                                            "required": true
                                         },
                                         {
                                             "type": "input-text",
                                             "name": "model_id",
-                                            "label": "模型ID"
+                                            "label": "模型ID",
+                                            "required": true
                                         },
                                         {
                                             "type": "radios",
@@ -427,6 +430,7 @@
                                             "label": "模型输入单价",
                                             "prefix": "￥",
                                             "suffix": "RMB",
+                                            "required": true,
                                             "value": "${IF(billing_unit == 'per_thousand_tokens', input_unit_price_thousand, input_unit_price_million)}"
                                         },
                                         {
@@ -435,6 +439,7 @@
                                             "label": "模型输出单价",
                                             "prefix": "￥",
                                             "suffix": "RMB",
+                                            "required": true,
                                             "value": "${IF(billing_unit == 'per_thousand_tokens', output_unit_price_thousand, output_unit_price_million)}"
                                         },
                                         {
