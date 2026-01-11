@@ -1,7 +1,6 @@
 import os
 import asyncio
 import json
-from tkinter import NO
 import traceback
 import base64
 
