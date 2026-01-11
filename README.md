@@ -38,6 +38,7 @@ Personal LLM API 是一款轻量级的 LLM 接口服务，与 [one-api](https://
 
 
 ## ChangeLog
+- 2026-01-11: v1.2 新增 seedream 视觉模型的支持
 - 2025-12-31: v1.1 新增自定义模型默认参数功能
 - 2025-12-28: v1.0 初始版本发布
 
@@ -95,6 +96,7 @@ test
 │   ├── llm_service.py     # 基础LLM服务
 │   ├── open_router_llm.py # OpenRouter LLM服务
 │   └── qwen_llm.py        # 阿里云通义千问服务
+│   └── seedream_llm.py    # 字节跳动 Seedream 视觉模型服务
 ├── static/                # 静态资源
 └── utils/                 # 工具函数
     ├── db_client.py       # 数据库客户端
@@ -173,6 +175,11 @@ http://127.0.0.1:2321/dashboard
 支持`Function Calling`以及`web search(联网搜索)`。
 
 接口文档可详见各大平台文档：[https://api-docs.deepseek.com/zh-cn/api/create-chat-completion](https://api-docs.deepseek.com/zh-cn/api/create-chat-completion)
+
+## images generations 接口
+支持`/images/generations`或`/images/edits`图像生成接口，兼容字节跳动 Seedream 视觉模型。
+
+Seedream 视觉模型文档：[https://www.volcengine.com/docs/82379/1541523?lang=zh](https://www.volcengine.com/docs/82379/1541523?lang=zh)
 
 ### 🌍️web search(联网搜索)
 1. **火山云(方舟)平台模型**
