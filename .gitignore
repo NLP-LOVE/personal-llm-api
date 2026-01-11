@@ -1,6 +1,7 @@
 
 __pycache__
 .idea
+.vscode
 app_config.yaml
 db/llm.db
 logs
