@@ -53,7 +53,7 @@ class Settings():
             self.SQLITE_PATH = yaml_config['database']['sqlite']['db_path']
 
         self.USE_DB = yaml_config['database']['use_db']
-        self.PROJECT_PATH = os.path.dirname(__file__)
+        self.PROJECT_PATH = os.path.dirname(__file__).replace('\\', '/')
 
         # 代理设置
         if yaml_config['proxy']['type'] == 'system':
@@ -65,6 +65,15 @@ class Settings():
         else:
             self.PROXIES = None
             self.HTTPX_PARAMS = {'timeout': 600}
+
+        # 免费模型
+        self.FREE_MODEL_BASE_URL = yaml_config['free_model']['base_url']
+        self.FREE_MODEL_API_KEY = yaml_config['free_model']['api_key']
+        self.FREE_MODEL_MODEL = yaml_config['free_model']['model']
+    
+    # 设置免费模型
+    def set_free_model(self, llm_obj):
+        self.FREE_MODEL = llm_obj
 
 
 

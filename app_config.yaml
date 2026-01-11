@@ -24,3 +24,8 @@ proxy:
   # - none: 不使用代理
   type: none
   url: http://127.0.0.1:7890
+
+free_model:
+  base_url: https://open.bigmodel.cn/api/paas/v4
+  api_key: c90f1ba50cdb437d98e87c46b0287baa.69CcHJD1EK8sdZ5V
+  model: glm-4.5-flash

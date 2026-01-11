@@ -220,6 +220,10 @@
                                 {
                                     "label": "百万 Token",
                                     "value": "per_million_tokens"
+                                },
+                                {
+                                    "label": "单张图片",
+                                    "value": "per_image"
                                 }
                             ],
                             "required": true
@@ -338,11 +342,13 @@
                 },
                 {
                     "name": "input_unit_price_thousand",
-                    "label": "模型输入单价/千token"
+                    "label": "模型输入单价/千token",
+                    "remark": "如果是视觉模型，单价为每张图片的单价"
                 },
                 {
                     "name": "output_unit_price_thousand",
-                    "label": "模型输出单价/千token"
+                    "label": "模型输出单价/千token",
+                    "remark": "如果是视觉模型，单价为每张图片的单价"
                 },
                 {
                     "name": "create_time",
@@ -420,6 +426,10 @@
                                                 {
                                                     "label": "百万 Token",
                                                     "value": "per_million_tokens"
+                                                },
+                                                {
+                                                    "label": "单张图片",
+                                                    "value": "per_image"
                                                 }
                                             ],
                                             "required": true

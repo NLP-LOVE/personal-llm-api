@@ -10,6 +10,11 @@ import pytz
 from pydantic import BaseModel, validator
 from fastapi import Request
 from fastapi.exceptions import HTTPException
+from json_repair import json_repair
+from PIL import Image
+# import sys
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from config import settings
 
 
@@ -166,6 +171,10 @@ def get_page_params(page: int, perPage: int):
 
 # base64图片保存
 def save_base64_image(base64_str: str):
+    # 移除Data URI前缀（如果存在）
+    if base64_str.startswith('data:'):
+        # 找到base64,开始的位置
+        base64_str = base64_str.split('base64,')[-1]
     image_data = base64.b64decode(base64_str)
 
     current = get_current_timestamp()[0:-4]
@@ -182,3 +191,112 @@ def save_base64_image(base64_str: str):
     file_path = f'/static/images/chat/{year}/{month}/{day}/{file_name}'
 
     return file_path
+
+def resize_img_limit(width, height, limit=4096):
+    """
+    计算缩放后的宽高，保持宽高比，且长边不超过 limit (4096)。
+    
+    :param width: 原始宽度
+    :param height: 原始高度
+    :param limit: 限制的最大像素值（默认为 4096）
+    :return: (new_width, new_height)
+    """
+    # 避免除以零
+    if width <= 0 or height <= 0:
+        return 0, 0
+    # 计算宽和高的缩放比例
+    # 选取两者中较小的比例，以确保两边都不超过 limit
+    scale = min(limit / width, limit / height)
+    # 计算新的宽高
+    # 使用 round 取整，也可以使用 math.floor (向下取整) 确保绝对不超过 4096
+    new_width = int(round(width * scale))
+    new_height = int(round(height * scale))
+    
+    # 额外保险：由于浮点数精度问题，再次确保不超限
+    new_width = min(new_width, limit)
+    new_height = min(new_height, limit)
+    return new_width, new_height
+
+
+def get_resolution(k_label, aspect_ratio="16:9"):
+    """
+    根据通用分辨率标签和宽高比计算具体的宽高
+    
+    :param k_label: str, 如 '1k', '2k', '3k', '4k', '8k'
+    :param aspect_ratio: str, 如 '16:9', '4:3', '21:9', '1:1'
+    :return: tuple, (width, height)
+    """
+    # 1. 定义 K 级别对应的基准宽度 (基于 DCI 标准)
+    k_base_widths = {
+        "1k": 1024,
+        "2k": 2048,
+        "3k": 3072,
+        "4k": 4096,
+        "8k": 8192
+    }
+    
+    # 也可以根据习惯调整为消费级标准 (如 2k=1920, 4k=3840)
+    # k_base_widths = {"1k": 1280, "2k": 1920, "3k": 3200, "4k": 3840}
+    label = k_label.lower()
+    if label not in k_base_widths:
+        raise ValueError(f"不支持的分辨率标签: {k_label}。请使用 1k, 2k, 3k, 4k 等。")
+    # 2. 解析宽高比
+    try:
+        rw, rh = map(float, aspect_ratio.split(':'))
+    except ValueError:
+        raise ValueError("宽高比格式错误，应为 '16:9' 这种格式。")
+    # 3. 计算宽度和高度
+    # 以宽度为基准计算高度
+    target_width = k_base_widths[label]
+    target_height = (target_width * rh) / rw
+    
+    # 4. 格式化输出：通常分辨率需要是偶数 (为了兼容视频编码器如 H.264)
+    final_w = int(target_width)
+    final_h = int(round(target_height / 2) * 2)
+    
+    return final_w, final_h
+
+def read_base64_img_size(base64_str: str):
+    file_path = save_base64_image(base64_str)[1:]
+    with Image.open(os.path.join(settings.PROJECT_PATH, file_path)) as img:
+        width, height = img.size
+    return width, height
+
+# 从query提取图片参数
+async def extract_img_params(query):
+    """从query提取图片参数"""
+    prompt =f"""
+query如下：
+'''
+{query}
+'''
+
+请从query中提取图片参数，并以json形式返回：
+    - resolution_ratio：图片分辨率，例如1k，2k，4k等，默认2k
+    - is_use_original_img_rate：布尔类型，是否使用原始图片比例，默认False
+    - rate：生成的图片宽高比，默认1:1，如果是已经使用了原图比例，则输出空字符串
+    """
+
+    params = {
+        'messages': [
+            {'role': 'user', 'content': prompt}
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0.7,
+        'api_key_id': 1,
+        # "enable_thinking": True,
+    }
+
+    # 调用免费模型提取图片参数
+    response = await settings.FREE_MODEL.chat(params)
+    # 解析json字符串
+    img_params = json_repair.loads(response['choices'][0]['message']['content'])
+
+    if img_params['resolution_ratio'] not in ['1k', '2k', '3k', '4k']:
+        raise HTTPException(status_code=400, detail="分辨率")
+    
+    return img_params
+
+
+if __name__ == '__main__':
+    print(resize_to_4k_limit(1408, 768))

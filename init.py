@@ -8,6 +8,7 @@ from service.byte_llm import ByteLLMService
 from service.llm_service import LLMService
 from service.open_router_llm import OpenRouterLLMService
 from service.qwen_llm import QwenLLMService
+from service.seedream import SeedreamLLMService
 from config import settings
 from config import install_statistics
 
@@ -119,7 +120,11 @@ async def init_models():
         params['default_params'] = model['default_params']
 
         if model['provider_english_name'] == 'ByteDance':
-            llm_service = ByteLLMService(**params)
+            # seedream 模型
+            if 'seedream' in model['model_id']:
+                llm_service = SeedreamLLMService(**params)
+            else:
+                llm_service = ByteLLMService(**params)
 
         elif model['provider_english_name'] == 'ALiYun':
             llm_service = QwenLLMService(**params)
@@ -156,6 +161,21 @@ async def init_models():
     if settings.USE_DB == 'mysql':
         db_client.pool.close()
         await db_client.pool.wait_closed()
+    
+
+    # 3. 初始化免费模型
+    free_model = LLMService(
+        id = 0,
+        base_url=settings.FREE_MODEL_BASE_URL,
+        api_key=settings.FREE_MODEL_API_KEY,
+        model_id=settings.FREE_MODEL_MODEL,
+        provider_english_name='free_llm',
+        model_name=settings.FREE_MODEL_MODEL,
+        input_unit_price=0,
+        output_unit_price=0,
+        default_params=''
+    )
+    settings.set_free_model(free_model)
 
     logger.info(f'模型接口初始化完成，共初始化{len(models_list)}个模型接口')
 
