@@ -1,5 +1,5 @@
 
--- V1.1--
+-- V1.2--
 -- LLM提供商表
 create table if not exists llm_provider
 (
@@ -138,4 +138,4 @@ create index llm_user_password_index
 
 INSERT INTO llm_user (id, username, password, is_first_login) VALUES (1, 'stark', '12345678', 1);
 
--- V1.1--
+-- V1.2--

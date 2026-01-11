@@ -1,7 +1,9 @@
 import os
 import asyncio
 import json
+from tkinter import NO
 import traceback
+import base64
 
 from loguru import logger
 current_file_path = os.path.abspath(__file__)
@@ -17,7 +19,7 @@ logger.add(
 
 # 导入FastAPI
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse, FileResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -193,6 +195,83 @@ async def chat_completions(request: Request):
 
     # 接收请求体
     req = await request.json()
+    # 校验参数
+    req = validate_chat_params(req)
+    req['api_key_id'] = api_key_id
+
+    # 1. 获取模型
+    model = get_model(req['model'])
+    del req['model']
+
+    # 2. 判断是否是流式
+    if req.get('stream', False):
+        # 流式
+        return StreamingResponse(chat_stream(model, req), media_type="text/event-stream")
+    else:
+        # 非流式
+        try:
+            answer = await model.chat(req)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            raise HTTPException(status_code=500, detail=str(e))
+        return answer
+
+
+async def img_params_process(img_params: list):
+    """处理图片参数"""
+    params = {}
+    content = []
+    images = []
+    for item in img_params:
+        if item[0] == 'prompt':
+            content.append({'type': 'text', 'text': item[1]})
+        elif 'image' in item[0]:
+            if isinstance(item[1], list) or isinstance(item[1], str):
+                if isinstance(item[1], str):
+                    item[1] = [item[1]]
+                for img in item[1]:
+                    images.append({'type': 'image_url', 'image_url': {'url': img}})
+            else:
+                contents = await item[1].read()
+        
+                # 2. 将二进制数据转换为 Base64 编码的 bytes
+                base64_bytes = base64.b64encode(contents)
+                
+                # 3. 将 bytes 转换为 utf-8 字符串
+                base64_string = base64_bytes.decode("utf-8")
+                
+                # (可选) 构造 Data URI 格式，方便前端直接展示
+                # 格式为：data:<mime_type>;base64,<data>
+                mime_type = item[1].content_type
+                full_base64_str = f"data:{mime_type};base64,{base64_string}"
+                images.append({'type': 'image_url', 'image_url': {'url': full_base64_str}})
+        else:
+            params[item[0]] = item[1]
+    
+    content.extend(images)
+    params['messages'] = [{'role': 'user', 'content': content}]
+
+    return params
+
+# 图片编辑和生成
+@app.post('/v1/images/edits')
+@app.post('/v1/images/generations')
+async def chat_completions(request: Request):
+    # 校验key
+    api_key = request.headers.get('Authorization')
+    api_key_id = await check_api_key(api_key)
+
+    content_type = request.headers.get('Content-Type', '')
+
+    # 接收请求体
+    if 'multipart/form-data' in content_type:
+        # 多部分表单数据
+        img_params = await request.form()
+        req = await img_params_process(img_params._list)
+    else:
+        img_params = await request.json()
+        req = await img_params_process([(k, v) for k, v in img_params.items()])
+
     # 校验参数
     req = validate_chat_params(req)
     req['api_key_id'] = api_key_id
