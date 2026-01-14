@@ -38,7 +38,7 @@ Personal LLM API 是一款轻量级的 LLM 接口服务，与 [one-api](https://
 
 
 ## ChangeLog
-- 2026-01-11: v1.2 新增 seedream 视觉模型的支持
+- 2026-01-11: v1.2 新增 Seedream 视觉模型的支持，详见应用：[Nano Banana进行AI绘画中文总是糊？一招可重新渲染，清晰到可直接汇报](http://era.dx3906.info/#/blog-detail?blog_id=79858911101006)
 - 2025-12-31: v1.1 新增自定义模型默认参数功能
 - 2025-12-28: v1.0 初始版本发布
 
