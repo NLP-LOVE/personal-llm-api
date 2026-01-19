@@ -9,6 +9,7 @@ from service.llm_service import LLMService
 from service.open_router_llm import OpenRouterLLMService
 from service.qwen_llm import QwenLLMService
 from service.seedream import SeedreamLLMService
+from service.aihubmix_llm import AihubmixLLMService
 from config import settings
 from config import install_statistics
 
@@ -119,22 +120,25 @@ async def init_models():
         params['output_unit_price'] = model['output_unit_price']
         params['default_params'] = model['default_params']
 
-        if model['provider_english_name'] == 'ByteDance':
+        if 'ark.cn-beijing.volces.com' in model['base_url']:
             # seedream 模型
             if 'seedream' in model['model_id']:
                 llm_service = SeedreamLLMService(**params)
             else:
                 llm_service = ByteLLMService(**params)
 
-        elif model['provider_english_name'] == 'ALiYun':
+        elif 'dashscope.aliyuncs.com' in model['base_url']:
             llm_service = QwenLLMService(**params)
 
-        elif model['provider_english_name'] == 'OpenRouter':
+        elif 'openrouter.ai' in model['base_url']:
             llm_service = OpenRouterLLMService(**params)
 
             # 兼容OpenRouter模型的联网搜索
             params['model_id'] += ':online'
             llm_service_online = OpenRouterLLMService(**params)
+        
+        elif 'aihubmix.com' in model['base_url']:
+            llm_service = AihubmixLLMService(**params)
 
         else:
             llm_service = LLMService(**params)
