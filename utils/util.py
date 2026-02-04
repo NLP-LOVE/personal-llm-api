@@ -195,7 +195,7 @@ def save_base64_image(base64_str: str):
 def resize_img_limit(width, height, limit=4096):
     """
     计算缩放后的宽高，保持宽高比，且长边不超过 limit (4096)。
-    
+
     :param width: 原始宽度
     :param height: 原始高度
     :param limit: 限制的最大像素值（默认为 4096）
@@ -211,7 +211,7 @@ def resize_img_limit(width, height, limit=4096):
     # 使用 round 取整，也可以使用 math.floor (向下取整) 确保绝对不超过 4096
     new_width = int(round(width * scale))
     new_height = int(round(height * scale))
-    
+
     # 额外保险：由于浮点数精度问题，再次确保不超限
     new_width = min(new_width, limit)
     new_height = min(new_height, limit)
@@ -221,7 +221,7 @@ def resize_img_limit(width, height, limit=4096):
 def get_resolution(k_label, aspect_ratio="16:9"):
     """
     根据通用分辨率标签和宽高比计算具体的宽高
-    
+
     :param k_label: str, 如 '1k', '2k', '3k', '4k', '8k'
     :param aspect_ratio: str, 如 '16:9', '4:3', '21:9', '1:1'
     :return: tuple, (width, height)
@@ -234,7 +234,7 @@ def get_resolution(k_label, aspect_ratio="16:9"):
         "4k": 4096,
         "8k": 8192
     }
-    
+
     # 也可以根据习惯调整为消费级标准 (如 2k=1920, 4k=3840)
     # k_base_widths = {"1k": 1280, "2k": 1920, "3k": 3200, "4k": 3840}
     label = k_label.lower()
@@ -249,11 +249,11 @@ def get_resolution(k_label, aspect_ratio="16:9"):
     # 以宽度为基准计算高度
     target_width = k_base_widths[label]
     target_height = (target_width * rh) / rw
-    
+
     # 4. 格式化输出：通常分辨率需要是偶数 (为了兼容视频编码器如 H.264)
     final_w = int(target_width)
     final_h = int(round(target_height / 2) * 2)
-    
+
     return final_w, final_h
 
 def read_base64_img_size(base64_str: str):
@@ -294,9 +294,8 @@ query如下：
 
     if img_params['resolution_ratio'] not in ['1k', '2k', '3k', '4k']:
         raise HTTPException(status_code=400, detail="分辨率")
-    
-    return img_params
 
+    return img_params
 
 if __name__ == '__main__':
     print(resize_to_4k_limit(1408, 768))

@@ -70,7 +70,10 @@ class Settings():
         self.FREE_MODEL_BASE_URL = yaml_config['free_model']['base_url']
         self.FREE_MODEL_API_KEY = yaml_config['free_model']['api_key']
         self.FREE_MODEL_MODEL = yaml_config['free_model']['model']
-    
+
+        # aihubmix 推理时代优惠码
+        self.AIHUBMIX_DISCOUNT_CODE = yaml_config['aihubmix_discount_code']
+
     # 设置免费模型
     def set_free_model(self, llm_obj):
         self.FREE_MODEL = llm_obj

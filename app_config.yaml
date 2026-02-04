@@ -29,3 +29,6 @@ free_model:
   base_url: https://open.bigmodel.cn/api/paas/v4
   api_key: c90f1ba50cdb437d98e87c46b0287baa.69CcHJD1EK8sdZ5V
   model: glm-4.5-flash
+
+# Aihubmix 模型的优惠码
+aihubmix_discount_code: test
