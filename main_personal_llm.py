@@ -30,7 +30,6 @@ from pydantic_core import ValidationError
 from init import init_db, init_models, get_model
 from config import settings
 from utils.db_client import db_client
-from utils.util import openai_to_claude_stream
 from backend.backend_api import backend_router
 from backend.llm_usage import router as llm_usage_router
 from backend.api_manage import router as api_router
@@ -117,7 +116,7 @@ async def validation_exception_handler2(request, exc):
     )
 
 
-async def chat_stream(model, params, url_path=''):
+async def chat_stream(model, params):
 
     try:
         # 判断是否使用response接口
@@ -132,16 +131,9 @@ async def chat_stream(model, params, url_path=''):
                 ## sse返回数据
                 yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
         else:
-            if 'messages' in url_path: # 处理messages格式的stream
-                async for event in openai_to_claude_stream(model, params):
-                    event_name = event["type"]
-                    data = json.dumps(event, ensure_ascii=False)
-                    # 按照 Claude 标准 SSE 格式拼接
-                    yield f"event: {event_name}\ndata: {data}\n\n"
-            else:
-                async for chunk in model.chat_stream(params):
-                    ## sse返回数据
-                    yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+            async for chunk in model.chat_stream(params):
+                ## sse返回数据
+                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
 
         # 完成
         yield "data: [DONE]\n\n"
@@ -195,8 +187,6 @@ def validate_chat_params(params: dict):
 # 定义路由和视图函数
 @app.post('/v1/chat/completions')
 @app.post('/chat/completions')
-@app.post('/v1/messages')
-@app.post('/messages')
 async def chat_completions(request: Request):
     # 校验key
     api_key = request.headers.get('Authorization')
@@ -215,7 +205,7 @@ async def chat_completions(request: Request):
     # 2. 判断是否是流式
     if req.get('stream', False):
         # 流式
-        return StreamingResponse(chat_stream(model, req, request.url.path), media_type="text/event-stream")
+        return StreamingResponse(chat_stream(model, req), media_type="text/event-stream")
     else:
         # 非流式
         try:
