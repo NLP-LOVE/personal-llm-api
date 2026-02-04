@@ -356,7 +356,7 @@ async def openai_to_claude_stream(model, params):
             "stop_reason": "end_turn" if finish_reason == "stop" else finish_reason,
             "stop_sequence": None
         },
-        "usage": {"output_tokens": usage.get("completion_tokens", 0)}
+        "usage": {"output_tokens": usage.get("completion_tokens", 0), "input_tokens": usage.get("prompt_tokens", 0)}
     }
     # 6. 发送 message_stop
     yield {"type": "message_stop"}

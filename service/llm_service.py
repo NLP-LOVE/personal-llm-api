@@ -200,6 +200,7 @@ class LLMService(object):
                         usage = chunk['usage']
 
                     if chunk['choices']:
+                        logger.info(f"chunk: {chunk}")
                         if 'content' not in chunk['choices'][0]['delta']:
                             chunk['choices'][0]['delta']['content'] = ''
                         if chunk['choices'][0]['delta']['content']:
@@ -374,3 +375,123 @@ class LLMService(object):
 
         context = messages + tools if tools else messages
         return context
+
+    
+    # messages接口参数转换成chat格式
+    def convert_messages_to_chat(self, params: dict):
+        """将messages参数转换成chat格式"""
+        if 'max_tokens' in params:
+            del params['max_tokens']
+        if 'metadata' in params:
+            del params['metadata']
+        if 'output_config' in params:
+            del params['output_config']
+        if 'reasoning_effort' in params:
+            del params['reasoning_effort']
+        if 'context_management' in params:
+            del params['context_management']
+        # if 'stream' not in params:
+        #     params['stream'] = True
+
+        messages = []
+        if 'system' in params:
+            msg = [item['text'] for item in params['system'] if item['type'] == 'text']
+            messages.append({'role': 'system', 'content': '\n\n'.join(msg)})
+        for item in params['messages']:
+            try:
+                content_list = []
+                if isinstance(item['content'], str):
+                    content_list.append(item['content'])
+                else:
+                    for content_item in item['content']:
+                        if 'text' in content_item:
+                            content_list.append(content_item['text'])
+                        if 'tool_use' in content_item or 'tool_result' in content_item:
+                            messages.append({'role': 'tool', 'content': json.dumps(content_item, ensure_ascii=False, indent=4)})
+                content = '\n\n'.join(content_list)
+            except:
+                content = item['content']
+            
+            if content_list:
+                messages.append({'role': item['role'], 'content': content})
+        params['messages'] = messages
+
+        openai_tools = []
+        for tool in params.get('tools', []):
+            openai_tool = {
+                "type": "function",
+                "function": {
+                    "name": tool.get("name"),
+                    "description": tool.get("description", ""),
+                    "parameters": tool.get("input_schema", {})
+                }
+            }
+            openai_tools.append(openai_tool)
+        if openai_tools:
+            params['tools'] = openai_tools
+
+        
+        return params
+
+
+    def openai_to_claude_response(self, openai_resp):
+        """
+        将 OpenAI Chat Completion 响应转换为 Claude Messages API 响应格式
+        """
+        # 1. 获取 OpenAI 响应的核心数据
+        choice = openai_resp.get("choices", [{}])[0]
+        message = choice.get("message", {})
+        finish_reason = choice.get("finish_reason")
+        
+        # 2. 构建 Claude 的 content 列表
+        claude_content = []
+        
+        # 处理文本内容
+        if message.get("content"):
+            claude_content.append({
+                "type": "text",
+                "text": message["content"]
+            })
+        
+        # 处理工具调用 (tool_calls)
+        if message.get("tool_calls"):
+            for tc in message["tool_calls"]:
+                # OpenAI 的 arguments 是字符串，Claude 需要解析后的 dict
+                try:
+                    tool_input = json.loads(tc["function"]["arguments"])
+                except (json.JSONDecodeError, TypeError):
+                    tool_input = tc["function"]["arguments"]
+                claude_content.append({
+                    "type": "tool_use",
+                    "id": tc["id"],
+                    "name": tc["function"]["name"],
+                    "input": tool_input
+                })
+        # 3. 映射停止状态 (finish_reason -> stop_reason)
+        # OpenAI: stop, length, tool_calls, content_filter, function_call
+        # Claude: end_turn, max_tokens, stop_sequence, tool_use
+        reason_map = {
+            "stop": "end_turn",
+            "tool_calls": "tool_use",
+            "length": "max_tokens",
+            "content_filter": "stop_sequence"
+        }
+        
+        # 4. 组装最终响应
+        claude_response = {
+            "id": openai_resp.get("id"),
+            "type": "message",
+            "role": "assistant",
+            "model": openai_resp.get("model"),
+            "content": claude_content,
+            "stop_reason": reason_map.get(finish_reason, "end_turn"),
+            "stop_sequence": None,
+            "usage": {
+                "input_tokens": openai_resp.get("usage", {}).get("prompt_tokens", 0),
+                "output_tokens": openai_resp.get("usage", {}).get("completion_tokens", 0)
+            }
+        }
+        
+        return claude_response
+        
+        

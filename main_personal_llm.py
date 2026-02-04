@@ -204,12 +204,17 @@ async def chat_completions(request: Request):
 
     # 接收请求体
     req = await request.json()
+
+    # 1. 获取模型
+    model = get_model(req['model'])
+    if 'messages' in request.url.path: # 处理messages格式转换成chat格式
+        req = model.convert_messages_to_chat(req)
+
     # 校验参数
     req = validate_chat_params(req)
     req['api_key_id'] = api_key_id
 
-    # 1. 获取模型
-    model = get_model(req['model'])
+    
     del req['model']
 
     # 2. 判断是否是流式
@@ -220,6 +225,8 @@ async def chat_completions(request: Request):
         # 非流式
         try:
             answer = await model.chat(req)
+            if 'messages' in request.url.path:
+                answer = model.openai_to_claude_response(answer)
         except Exception as e:
             logger.error(traceback.format_exc())
             raise HTTPException(status_code=500, detail=str(e))
